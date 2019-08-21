@@ -39,16 +39,16 @@ export default class Health extends Component<Props>{
     return(
       <View style={styles.container}>
         <View style={styles.healthView}>
-          <Text>Max Health</Text>
-          <TextInput onChange={(e) => this.setState({ maxHealth: e.nativeEvent.text })} value={String(this.state.maxHealth)} />        
+          <Text style={styles.text}>Max Health</Text>
+          <TextInput style={styles.text} onChange={(e) => this.setState({ maxHealth: e.nativeEvent.text })} value={String(this.state.maxHealth)} />        
         </View>
         <View style={styles.healthView}>
-          <Text>Current Health</Text>
-          <TextInput onChange={(e) => this.setState({ currentHealth: e.nativeEvent.text })} value={String(this.state.currentHealth)} />
+          <Text style={styles.text}>Current Health</Text>
+          <TextInput style={styles.text} onChange={(e) => this.setState({ currentHealth: e.nativeEvent.text })} value={String(this.state.currentHealth)} />
         </View>
         <View style={styles.healthView}>
-          <Text>Temp Health</Text>
-          <TextInput onChange={(e) => this.setState({tempHealth: e.nativeEvent.text})} value={String(this.state.tempHealth)} />
+          <Text style={styles.text}>Temp Health</Text>
+          <TextInput style={styles.text} onChange={(e) => this.setState({tempHealth: e.nativeEvent.text})} value={String(this.state.tempHealth)} />
         </View>
       </View>
     )
@@ -64,5 +64,8 @@ const styles = StyleSheet.create({
   healthView: {
     flexDirection: 'column',
     alignItems: 'center'
+  },
+  text: {
+    fontSize: 18
   }
 });

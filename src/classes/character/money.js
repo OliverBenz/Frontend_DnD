@@ -39,21 +39,21 @@ export default class Money extends Component<Props>{
   render(){
     return(
       <View>
-        <View style={{flexDirection: 'column'}}>
+        <View>
           <View style={{flexDirection: 'row'}}>
-            <Text style={{flex: 1, textAlign: 'center'}}>CC</Text>
-            <Text style={{flex: 1, textAlign: 'center'}}>SC</Text>
-            <Text style={{flex: 1, textAlign: 'center'}}>EP</Text>
-            <Text style={{flex: 1, textAlign: 'center'}}>GP</Text>
-            <Text style={{flex: 1, textAlign: 'center'}}>PP</Text>
+            <Text style={styles.text}>CC</Text>
+            <Text style={styles.text}>SC</Text>
+            <Text style={styles.text}>EP</Text>
+            <Text style={styles.text}>GP</Text>
+            <Text style={styles.text}>PP</Text>
           </View>
           
           <View style={{flexDirection: 'row'}}>
-            <TextInput style={{flex: 1, textAlign: 'center'}} onChange={(e) => this.setState({copper: e.nativeEvent.text}) } value={ String(this.state.copper) } />
-            <TextInput style={{flex: 1, textAlign: 'center'}} onChange={(e) => this.setState({silver: e.nativeEvent.text})} value={ String(this.state.silver) } />
-            <TextInput style={{flex: 1, textAlign: 'center'}} onChange={(e) => this.setState({electrum: e.nativeEvent.text})} value={ String(this.state.electrum) } />
-            <TextInput style={{flex: 1, textAlign: 'center'}} onChange={(e) => this.setState({gold: e.nativeEvent.text})} value={ String(this.state.gold) } />
-            <TextInput style={{flex: 1, textAlign: 'center'}} onChange={(e) => this.setState({platinum: e.nativeEvent.text})} value={ String(this.state.platinum) } />
+            <TextInput style={styles.text} onChange={(e) => this.setState({copper: e.nativeEvent.text}) } value={ String(this.state.copper) } />
+            <TextInput style={styles.text} onChange={(e) => this.setState({silver: e.nativeEvent.text})} value={ String(this.state.silver) } />
+            <TextInput style={styles.text} onChange={(e) => this.setState({electrum: e.nativeEvent.text})} value={ String(this.state.electrum) } />
+            <TextInput style={styles.text} onChange={(e) => this.setState({gold: e.nativeEvent.text})} value={ String(this.state.gold) } />
+            <TextInput style={styles.text} onChange={(e) => this.setState({platinum: e.nativeEvent.text})} value={ String(this.state.platinum) } />
           </View>
         </View>
       </View>
@@ -62,5 +62,9 @@ export default class Money extends Component<Props>{
 }
 
 const styles = StyleSheet.create({
-
+  text: {
+    fontSize: 14,
+    flex: 1,
+    textAlign: 'center',
+  }
 });

@@ -13,6 +13,7 @@ import {
 
 import Money from './character/money';
 import Health from './character/health';
+import General from './character/general';
 
 type Props = {};
 
@@ -24,18 +25,13 @@ export default class Character extends Component<Props>{
 
   constructor(props){
     super(props);
-    this.state = {
-      health: {
-        max: 24,
-        temp: 0,
-        now: 12,
-      }
-    }
+    this.state = { }
   }
 
   render(){
     return(
-      <View style={{flexDirection: 'column'}}>
+      <View>
+        <General />
         <Health />
         <Money />       
       </View>
