@@ -54,35 +54,29 @@ export default class Converter extends Component<Props>{
   render(){
     return(
       <View style={[styles.container, {flexDirection: 'column'}]}>
-        <View style={{flexDirection: 'row', marginBottom: 20}}>
+        <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 50}}>
           <Text style={[styles.text, {flex: 2}]}>Meter: </Text>
-          <TextInput keyboardType={'numeric'} underlineColorAndroid={'transparent'} style={[styles.input, styles.text, {flex: 4, marginRight: 5}]} onChange={(e) => this._updateMeter(e.nativeEvent.text)} placeholder="1" value={this.state.meter} />
+          <TextInput keyboardType={'numeric'} underlineColorAndroid={'transparent'} style={[styles.text, {flex: 4, marginRight: 5}]} onChange={(e) => this._updateMeter(e.nativeEvent.text)} placeholder="1" value={this.state.meter} />
           
           <Text style={[styles.text, {flex: 2}]}>Yards: </Text>
-          <TextInput keyboardType={'numeric'} underlineColorAndroid={'transparent'} style={[styles.input, styles.text, {flex: 4, marginLeft: 5}]} onChange={(e) => this._updateYard(e.nativeEvent.text)} placeholder="1.0936" value={this.state.yard} />  
+          <TextInput keyboardType={'numeric'} underlineColorAndroid={'transparent'} style={[styles.text, {flex: 4, marginLeft: 5}]} onChange={(e) => this._updateYard(e.nativeEvent.text)} placeholder="1.0936" value={this.state.yard} />   
         </View>
-
+        
         <Text style={styles.text}>Result: {this.state.result} {this.state.resType}</Text>
         <TouchableOpacity style={styles.button} onPress={() => this._reset()}>
           <Text style={styles.text}>Reset</Text>
         </TouchableOpacity>
       </View>
-
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    flexDirection: 'column',
-    padding: 10,
-    backgroundColor: '#f7f7f7'
+    padding: 10
   },
   text: {
     fontSize: 18
-  },
-  input: {
   },
   button: {
     alignItems: 'center',
