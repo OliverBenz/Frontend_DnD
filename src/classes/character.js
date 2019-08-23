@@ -25,20 +25,32 @@ export default class Character extends Component<Props>{
 
   constructor(props){
     super(props);
-    this.state = { }
+    this.state = { };
   }
 
   render(){
     return(
       <View>
-        <General />
-        <Health />
-        <Money />       
+        <View>
+          <General />
+          <Health />
+          <Money />
+        </View>
+
+        {/* <TouchableOpacity style={styles.button} onPress={this._updateData()}>
+          <Text>Update</Text>
+        </TouchableOpacity>         */}
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 15,
+    marginTop: 10,
+    marginBottom: 10
+  },
 });

@@ -35,6 +35,20 @@ export default class Health extends Component<Props>{
     })
   }
 
+  componentWillUnmount(){
+    fetch('http://benz-prints.com:3004/dnd/charHealth/xyz/Hk6Sh1m9^aWd9NMOdKh', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        maxHealth: this.state.maxHealth,
+        currentHealth: this.state.currentHealth,
+        tempHealth: this.state.tempHealth
+      }),
+    });
+  }
+
   render(){
     return(
       <View style={styles.container}>
@@ -59,7 +73,13 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    borderWidth: 1
+    
+    borderWidth: 1,
+    
+    marginBottom: 40,
+
+    paddingTop: 10,
+    paddingBottom: 10
   },
   healthView: {
     flexDirection: 'column',

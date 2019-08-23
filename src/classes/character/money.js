@@ -36,6 +36,24 @@ export default class Money extends Component<Props>{
       this.setState({copper: resJ.data.copper, silver: resJ.data.silver, electrum: resJ.data.electrum, gold: resJ.data.gold, platinum: resJ.data.platinum});
     });
   }
+
+  componentWillUnmount(){
+    fetch('http://benz-prints.com:3004/dnd/charMoney/xyz/Hk6Sh1m9^aWd9NMOdKh', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        copper: this.state.copper,
+        silver: this.state.silver,
+        electrum: this.state.electrum,
+        gold: this.state.gold,
+        platinum: this.state.platinum
+      }),
+    });
+    // .then((res) => {alert(res.json())});
+  }
+
   render(){
     return(
       <View>
