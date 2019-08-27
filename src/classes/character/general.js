@@ -8,6 +8,7 @@ import {
   View,
   Button,
   TouchableOpacity,
+  ActivityIndicator,
   Image
 } from 'react-native';
 
@@ -26,8 +27,14 @@ export default class General extends Component<Props>{
       background: "",
       age: 0,
       height: 0,
-      weight: 0
+      weight: 0,
+
+      isLoading: false
     }
+  }
+
+  componentDidMount(){
+    this.setState({isLoading: true});
 
     fetch('http://benz-prints.com:3004/dnd/charGeneral/xyz/Hk6Sh1m9^aWd9NMOdKh', {
       method: 'GET',
@@ -35,68 +42,32 @@ export default class General extends Component<Props>{
         'Content-Type': 'application-json'
       }
     })
-    .then((res) => res.json())
+    .then((res) => {
+      return res.json();
+    })
     .then((resJ) => {
-      this.setState({firstname: resJ.data.firstname, lastname: resJ.data.lastname, level: resJ.data.level, xp: resJ.data.xp, alignment: resJ.data.alignment, background: resJ.data.background, age: resJ.data.age, height: resJ.data.height, weight: resJ.data.weight});
-    }); 
+      this.setState({firstname: resJ.firstname, lastname: resJ.lastname, level: resJ.level, xp: resJ.xp, alignment: resJ.alignment, background: resJ.background, age: resJ.age, height: resJ.height, weight: resJ.weight, isLoading: false});
+    })
+    .catch((error) => {
+      alert(error);
+    });
   }
 
   render(){
+    if (this.state.isLoading) {
+      return <ActivityIndicator size="large" color="#0000ff" />;
+    }
     return(
       <View style={styles.title}>
         <Text style={styles.heading}>{this.state.firstname} {this.state.lastname} - Lvl: {this.state.level}</Text>
-        <Text style={styles.heading}>XP: {this.state.xp}</Text>
+        <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+          <Text style={styles.heading}>XP: </Text>
+          <TextInput keyboardType={'numeric'} underlineColorAndroid={'transparent'} style={styles.heading}  onChange={(e) => {this.setState({xp: e.nativeEvent.text})}} value={String(this.state.xp)} />
+        </View>
+        
+        {/* <TextInput keyboardType={'numeric'} underlineColorAndroid={'transparent'} style={styles.heading} onChange={(e) => {this.setState({xp: e.nativeEvent.text})}}>{this.state.xp}</TextInput> */}
         {/* <Text>{this.state.lastname}</Text> */}
       </View>
-
-      // <View style={{marginBottom: 40, flexDirection: 'row'}}>
-      //   <View style={{flexDirection: 'column'}}>
-      //     <View style={styles.topRow}>
-      //       <Text style={[styles.text, styles.underline]}>Firstname</Text>
-      //       <Text style={styles.text}>{ this.state.firstname }</Text>
-      //     </View>
-          
-      //     <Text style={[styles.text, styles.underline]}>Alignment</Text>
-      //     <Text style={styles.text}>{ this.state.alignment }</Text>
-      //   </View>
-        
-      //   <View style={{flexDirection: 'column'}}>
-      //     <View style={styles.topRow}>
-      //       <Text style={[styles.text, styles.underline]}>Lastname</Text>
-      //       <Text style={styles.text}>{ this.state.lastname }</Text>
-      //     </View>
-          
-      //     <Text style={[styles.text, styles.underline]}>Background</Text>
-      //     <Text style={styles.text}>{ this.state.background }</Text>  
-      //   </View>
-        
-      //   <View style={{flexDirection: 'column'}}>
-      //     <View style={styles.topRow}>
-      //       <Text style={[styles.text, styles.underline]}>Level</Text>
-      //       <Text style={[styles.text, {textAlign: 'center'}]}>{ this.state.level }</Text>
-      //     </View>
-          
-      //     <Text style={[styles.text, styles.underline]}>Age</Text>
-      //     <Text style={[styles.text, {textAlign: 'center'}]}>{ this.state.age }</Text>       
-      //   </View>
-        
-      //   <View style={{flexDirection: 'column'}}>
-      //     <View style={styles.topRow}>
-      //       <Text style={[styles.text, styles.underline]}>XP</Text>
-      //       <Text style={[styles.text, {textAlign: 'center'}]}>{ this.state.xp }</Text>
-      //     </View>
-          
-      //     <Text style={[styles.text, styles.underline]}>Height</Text>
-      //     <Text style={[styles.text, {textAlign: 'center'}]}>{ this.state.height }</Text>    
-      //   </View>
-        
-      //   <View style={{flexDirection: 'column'}}>
-      //     <View style={styles.topRow}>
-      //       <Text style={[styles.text, styles.underline]}>Weight</Text>
-      //       <Text style={[styles.text, {textAlign: 'center'}]}>{ this.state.weight }</Text>          
-      //     </View>
-      //   </View>
-      // </View>
     )
   }
 }
@@ -115,7 +86,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingLeft: 10,
     paddingRight: 10,
-    marginBottom: 40
+    marginBottom: 40,
+
+    alignItems: 'center'
   },
   underline: {
     textDecorationLine: 'underline'

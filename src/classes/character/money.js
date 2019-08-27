@@ -8,6 +8,7 @@ import {
   View,
   Button,
   TouchableOpacity,
+  ActivityIndicator,
   Image
 } from 'react-native';
 
@@ -22,8 +23,13 @@ export default class Money extends Component<Props>{
       silver: 0,
       electrum: 0,
       gold: 0,
-      platinum: 0
+      platinum: 0,
+      isLoading: false
     }
+  }
+
+  componentDidMount(){
+    this.setState({isLoading: true});
 
     fetch("http://benz-prints.com:3004/dnd/charMoney/xyz/Hk6Sh1m9^aWd9NMOdKh", {
       method: 'GET',
@@ -33,7 +39,10 @@ export default class Money extends Component<Props>{
     })
     .then((res) => res.json())
     .then((resJ) => {
-      this.setState({copper: resJ.data.copper, silver: resJ.data.silver, electrum: resJ.data.electrum, gold: resJ.data.gold, platinum: resJ.data.platinum});
+      this.setState({copper: resJ.copper, silver: resJ.silver, electrum: resJ.electrum, gold: resJ.gold, platinum: resJ.platinum, isLoading: false});
+    })
+    .catch((error) => {
+      alert(error);
     });
   }
 
@@ -55,6 +64,10 @@ export default class Money extends Component<Props>{
   }
 
   render(){
+    if (this.state.isLoading) {
+      return <ActivityIndicator size="large" color="#0000ff" />;
+    }
+
     return(
       <View>
         <View>
@@ -67,11 +80,11 @@ export default class Money extends Component<Props>{
           </View>
           
           <View style={{flexDirection: 'row'}}>
-            <TextInput style={styles.text} onChange={(e) => this.setState({copper: e.nativeEvent.text}) } value={ String(this.state.copper) } />
-            <TextInput style={styles.text} onChange={(e) => this.setState({silver: e.nativeEvent.text})} value={ String(this.state.silver) } />
-            <TextInput style={styles.text} onChange={(e) => this.setState({electrum: e.nativeEvent.text})} value={ String(this.state.electrum) } />
-            <TextInput style={styles.text} onChange={(e) => this.setState({gold: e.nativeEvent.text})} value={ String(this.state.gold) } />
-            <TextInput style={styles.text} onChange={(e) => this.setState({platinum: e.nativeEvent.text})} value={ String(this.state.platinum) } />
+            <TextInput keyboardType={'numeric'} underlineColorAndroid={'transparent'} style={styles.text} onChange={(e) => this.setState({copper: e.nativeEvent.text}) } value={ String(this.state.copper) } />
+            <TextInput keyboardType={'numeric'} underlineColorAndroid={'transparent'} style={styles.text} onChange={(e) => this.setState({silver: e.nativeEvent.text})} value={ String(this.state.silver) } />
+            <TextInput keyboardType={'numeric'} underlineColorAndroid={'transparent'} style={styles.text} onChange={(e) => this.setState({electrum: e.nativeEvent.text})} value={ String(this.state.electrum) } />
+            <TextInput keyboardType={'numeric'} underlineColorAndroid={'transparent'} style={styles.text} onChange={(e) => this.setState({gold: e.nativeEvent.text})} value={ String(this.state.gold) } />
+            <TextInput keyboardType={'numeric'} underlineColorAndroid={'transparent'} style={styles.text} onChange={(e) => this.setState({platinum: e.nativeEvent.text})} value={ String(this.state.platinum) } />
           </View>
         </View>
       </View>

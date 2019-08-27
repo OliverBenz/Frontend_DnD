@@ -28,6 +28,7 @@ export default class Character extends Component<Props>{
     this.state = { };
   }
 
+
   render(){
     return(
       <View>
@@ -37,9 +38,14 @@ export default class Character extends Component<Props>{
           <Money />
         </View>
 
-        {/* <TouchableOpacity style={styles.button} onPress={this._updateData()}>
-          <Text>Update</Text>
-        </TouchableOpacity>         */}
+        {/* TODO: Navigate to spellList with charSpells URL */}
+        <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('SpellList', { title: "Character Spells", url: "http://benz-prints.com:3004/dnd/charSpells/xyz/Hk6Sh1m9^aWd9NMOdKh" })}>
+          <Text>Spells</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.button} onPress={() => {}}>
+          <Text>Notes</Text>
+        </TouchableOpacity>
       </View>
     );
   }

@@ -35,7 +35,7 @@ export default class Home extends Component<Props>{
           <Text style={styles.text}>Converter</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('SpellList')} style={styles.button}>
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('SpellList', { title: "Spell List", url: "http://benz-prints.com:3004/dnd/getSpells" })} style={styles.button}>
           <Text style={styles.text}>Spell List</Text>
         </TouchableOpacity>
 

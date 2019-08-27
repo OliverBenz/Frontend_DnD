@@ -8,6 +8,7 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
   Image
 } from 'react-native';
 
@@ -15,8 +16,10 @@ type Props = {};
 
 
 export default class SpellList extends Component<Props>{
-  static navigationOptions = {
-    title: 'Spell List',
+  static navigationOptions = ({navigation}) => {
+    return{
+      title: navigation.getParam('title')
+    }
   };
 
   constructor(props){
@@ -24,10 +27,15 @@ export default class SpellList extends Component<Props>{
 
     this.state = {
       spellList: [],
-      search: ""
-    }
+      search: "",
 
-    fetch("http://benz-prints.com:3004/dnd/getSpells", {
+      isLoading: false
+    }
+  }
+
+  componentDidMount(){
+    this.setState({isLoading: true});
+    fetch(this.props.navigation.state.params.url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -35,24 +43,12 @@ export default class SpellList extends Component<Props>{
     })
     .then((res) => res.json())
     .then((resJ) => {
-      var spellList = [];
-      
-      for(let i = 0; i < resJ.data.length; i++){
-        spellList.push({
-          "id": resJ.data[i].id,
-          "name": resJ.data[i].name,
-          "level": resJ.data[i].level,
-          "range": resJ.data[i].range,
-          "castingTime": resJ.data[i].castTime,
-          "save": resJ.data[i].save,
-          "duration": resJ.data[i].duration,
-          "components": resJ.data[i].components,
-          "desc": resJ.data[i].desc,
-          "descLong": resJ.data[i].descLong,
-          "show": true
-        });
+      var spellList = resJ;
+
+      for(let i = 0; i < spellList.length; i++){
+        spellList[i].show = true;
       }
-      this.setState({ spellList: spellList, spellListShow: spellList });
+      this.setState({ spellList: spellList, isLoading: false });
     });
   }
 
@@ -64,7 +60,7 @@ export default class SpellList extends Component<Props>{
   _filterSpells = (filter) => {
     this.setState({search: filter});
 
-    let spells = this.state.spellList; 
+    let spells = this.state.spellList;
     for(let i = 0; i < spells.length; i++){
       // To Upper Case function needed because .includes function is case sensitive
       if (! spells[i].name.toUpperCase().includes(filter.toUpperCase())){
@@ -99,18 +95,27 @@ export default class SpellList extends Component<Props>{
       return (
         <TouchableOpacity key={s.id} style={styles.container} onPress={() => this._inspectSpell(s.id)}>
           <View style={{flexDirection: 'row', marginBottom: 10}}>
-            <Text style={[styles.text, {flex: 3, marginRight: 5}]}>{s.name}</Text>
+            <Text style={[styles.text, {flex: 3, marginRight: 5, paddingLeft: 5}]}>{s.name}</Text>
             <Text style={[styles.text, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>{s.range}</Text>
             <Text style={[styles.text, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>{s.castingTime}</Text>
             <Text style={[styles.text, {flex: 1, marginLeft: 5, textAlign: 'center'}]}>{s.save}</Text>          
           </View>
-          <Text style={[styles.text, {flex: 1}]}>{s.desc}</Text>
+          <Text style={[styles.text, {flex: 1, paddingLeft: 5}]}>{s.desc}</Text>
         </TouchableOpacity>
       )
     }
   }
 
   render(){
+    if(this.state.isLoading){
+      // TODO: Center indivator to center of screen
+      return (
+        <View style={{alignItems: 'center', justifyContent: 'center'}}>
+         <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+        
+      );
+    }
     return(
       <ScrollView style={{padding: 10, backgroundColor: '#ededed',}}>
 
@@ -124,7 +129,7 @@ export default class SpellList extends Component<Props>{
         </View>
 
         <View style={{flexDirection: 'row', marginTop: 20}}>
-          <Text style={{flex: 3, marginRight: 5, paddingLeft: 15, fontSize: 18}}>Name</Text>
+          <Text style={{flex: 3, marginRight: 5, paddingLeft: 15, fontSize: 18, paddingLeft: 5}}>Name</Text>
           <Text style={{flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center', fontSize: 18}}>Range</Text>
           <Text style={{flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center', fontSize: 18}}>Casting Time</Text>
           <Text style={{flex: 1, marginLeft: 5, textAlign: 'center', fontSize: 18}}>Save</Text>          
@@ -154,7 +159,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     borderWidth: 1,
-    borderColor: '#a8b0bd',
+    borderColor: '#a8b0bd'
   },
   searchField: {
     borderWidth: 1,
