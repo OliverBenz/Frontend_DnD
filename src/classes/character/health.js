@@ -3,14 +3,12 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
+  View,
   Text,
   TextInput,
-  View,
-  Button,
-  TouchableOpacity,
-  ActivityIndicator,
-  Image
+  ActivityIndicator
 } from 'react-native';
+import { getData } from '../../services/asyStorage';
 
 type Props = {};
 
@@ -22,39 +20,18 @@ export default class Health extends Component<Props>{
       maxHealth: 0,
       currentHealth: 0,
       tempHealth: 0,
+
       isLoading: false
     }
   }
 
   componentDidMount(){
-    this.setState({isLoading: true});
+    this.setState({ isLoading: true });
 
-    fetch('http://benz-prints.com:3004/dnd/charHealth/xyz/Hk6Sh1m9^aWd9NMOdKh', {
-      mehod: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    })
-    .then((res) => res.json())
-    .then((resJ) => {
-      this.setState({maxHealth: resJ.maxHealth, currentHealth: resJ.currentHealth, tempHealth: resJ.tempHealth, isLoading: false});
-    })
-    .catch((error) => {
-      alert(error)
-    });
-  }
-
-  componentWillUnmount(){
-    fetch('http://benz-prints.com:3004/dnd/charHealth/xyz/Hk6Sh1m9^aWd9NMOdKh', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        maxHealth: this.state.maxHealth,
-        currentHealth: this.state.currentHealth,
-        tempHealth: this.state.tempHealth
-      }),
+    getData("sessionId").then((sessionId) => {
+      getData("charString").then((charString) =>{
+        this._getAPI(sessionId, charString);
+      });
     });
   }
 
@@ -79,6 +56,24 @@ export default class Health extends Component<Props>{
         </View>
       </View>
     )
+  }
+
+  // Data fetching
+
+  _getAPI = (sessionId, charString) => {
+    fetch('http://benz-prints.com:3004/dnd/charHealth/' + sessionId + '/' + charString, {
+      mehod: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    .then((res) => res.json())
+    .then((resJ) => {
+      this.setState({maxHealth: resJ.maxHealth, currentHealth: resJ.currentHealth, tempHealth: resJ.tempHealth, isLoading: false});
+    })
+    .catch((error) => {
+      alert(error)
+    });
   }
 }
 

@@ -3,14 +3,13 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
+  View,
   Text,
   TextInput,
-  View,
-  Button,
-  TouchableOpacity,
-  ActivityIndicator,
-  Image
+  ActivityIndicator
 } from 'react-native';
+
+import { getData } from '../../services/asyStorage';
 
 type Props = {};
 
@@ -24,43 +23,19 @@ export default class Money extends Component<Props>{
       electrum: 0,
       gold: 0,
       platinum: 0,
+
       isLoading: false
     }
   }
 
   componentDidMount(){
-    this.setState({isLoading: true});
+    this.setState({ isLoading: true });
 
-    fetch("http://benz-prints.com:3004/dnd/charMoney/xyz/Hk6Sh1m9^aWd9NMOdKh", {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    })
-    .then((res) => res.json())
-    .then((resJ) => {
-      this.setState({copper: resJ.copper, silver: resJ.silver, electrum: resJ.electrum, gold: resJ.gold, platinum: resJ.platinum, isLoading: false});
-    })
-    .catch((error) => {
-      alert(error);
-    });
-  }
-
-  componentWillUnmount(){
-    fetch('http://benz-prints.com:3004/dnd/charMoney/xyz/Hk6Sh1m9^aWd9NMOdKh', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        copper: this.state.copper,
-        silver: this.state.silver,
-        electrum: this.state.electrum,
-        gold: this.state.gold,
-        platinum: this.state.platinum
-      }),
-    });
-    // .then((res) => {alert(res.json())});
+    getData("sessionId").then((sessionId) => {
+      getData("charString").then((charString) =>{
+        this._getAPI(sessionId, charString);
+      });
+    });    
   }
 
   render(){
@@ -89,6 +64,24 @@ export default class Money extends Component<Props>{
         </View>
       </View>
     )
+  }
+
+  // Data fetching
+
+  _getAPI = (sessionId, charString) => {
+    fetch('http://benz-prints.com:3004/dnd/charMoney/' + sessionId + '/' + charString, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    .then((res) => res.json())
+    .then((resJ) => {
+      this.setState({copper: resJ.copper, silver: resJ.silver, electrum: resJ.electrum, gold: resJ.gold, platinum: resJ.platinum, isLoading: false});
+    })
+    .catch((error) => {
+      alert(error);
+    });
   }
 }
 
