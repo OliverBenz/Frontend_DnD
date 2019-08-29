@@ -68,7 +68,7 @@ export default class Home extends Component<Props>{
             <Text style={styles.text}>Login</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity onPress={() => {}} style={styles.button}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')} style={styles.button}>
             <Text style={styles.text}>Register</Text>
           </TouchableOpacity>
         </View>

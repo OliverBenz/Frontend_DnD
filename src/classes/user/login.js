@@ -10,13 +10,13 @@ import {
   TouchableOpacity,
   Image
 } from 'react-native';
-import { storeData } from '../services/asyStorage';
+import { storeData } from '../../services/asyStorage';
 
 type Props = {};
 
 export default class Login extends Component<Props>{
   static navigationOptions = {
-    title: 'Home',
+    title: 'Login',
   };
 
   constructor(props){
@@ -61,7 +61,7 @@ export default class Login extends Component<Props>{
         <Text>Password: </Text>
         <TextInput onChange={(e) => this.setState({ password: e.nativeEvent.text })} value={this.state.password} secureTextEntry={true} />
 
-        <TouchableOpacity onPress={() => this._postBackend()}>
+        <TouchableOpacity style={styles.button} onPress={() => this._postBackend()}>
           <Text>Login</Text>
         </TouchableOpacity>
       </View>
@@ -70,5 +70,11 @@ export default class Login extends Component<Props>{
 }
 
 const styles = StyleSheet.create({
-
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 15,
+    marginTop: 10,
+    marginBottom: 10,
+  },
 });
