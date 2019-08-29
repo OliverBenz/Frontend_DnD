@@ -64,22 +64,28 @@ export default class Login extends Component<Props>{
 
   _registerAPI = () => {
     if(this.state.firstname !== "" && this.state.lastname !== "" && this.state.password !== "" && this.state.email !== "" && this.state.password == this.state.passwordCheck){
-      fetch("", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          "firstname": this.state.firstname,
-          "lastname": this.state.lastname,
-          "email": this.state.email,
-          "password": this.state.password
-        }),
+      getData("ip").then((ip) => {
+        fetch(ip + "userRegister", {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            "firstname": this.state.firstname,
+            "lastname": this.state.lastname,
+            "email": this.state.email,
+            "password": this.state.password
+          }),
+        })
+        .then((res) => res.json())
+        .then((resJ) => {
+          storeData("sessionId", resJ).then(() => {
+            this.props.navigation.navigate('Home');
+          });
+        });
       });
     }
   }
-
-
 }
 
 

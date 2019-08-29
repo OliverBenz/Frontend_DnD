@@ -69,32 +69,36 @@ export default class Health extends Component<Props>{
   // Data fetching
 
   _getAPI = (sessionId, charString) => {
-    fetch('http://benz-prints.com:3004/dnd/charHealth/' + sessionId + '/' + charString, {
-      mehod: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    })
-    .then((res) => res.json())
-    .then((resJ) => {
-      this.setState({maxHealth: resJ.maxHealth, currentHealth: resJ.currentHealth, tempHealth: resJ.tempHealth, isLoading: false});
-    })
-    .catch((error) => {
-      alert(error)
+    getData("ip").then((ip) => {
+      fetch(ip + 'charHealth/' + sessionId + '/' + charString, {
+        mehod: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      .then((res) => res.json())
+      .then((resJ) => {
+        this.setState({maxHealth: resJ.maxHealth, currentHealth: resJ.currentHealth, tempHealth: resJ.tempHealth, isLoading: false});
+      })
+      .catch((error) => {
+        alert(error)
+      });
     });
   }
 
   _postAPI = (sessionId, charString) => {
-    fetch('http://benz-prints.com:3004/dnd/charHealth/' + sessionId + '/' + charString, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        maxHealth: this.state.maxHealth,
-        currentHealth: this.state.currentHealth,
-        tempHealth: this.state.tempHealth
-      }),
+    getData("ip").then((ip) => {
+      fetch(ip + 'charHealth/' + sessionId + '/' + charString, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          maxHealth: this.state.maxHealth,
+          currentHealth: this.state.currentHealth,
+          tempHealth: this.state.tempHealth
+        }),
+      });
     });
   }
 }

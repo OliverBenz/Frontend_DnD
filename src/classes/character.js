@@ -31,7 +31,9 @@ export default class Character extends Component<Props>{
   _navSpells = () => {
     getData("sessionId").then((sessionId) => {
       getData("charString").then((charString) => {
-        this.props.navigation.navigate('SpellList', { title: "Spell List", url: "http://benz-prints.com:3004/dnd/charSpells/" + sessionId + "/" + charString });
+        getData("ip").then((ip) => {
+          this.props.navigation.navigate('SpellList', { title: "Spell List", url: ip + "charSpells/" + sessionId + "/" + charString });
+        });
       });
     });
   }

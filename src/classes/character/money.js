@@ -78,34 +78,38 @@ export default class Money extends Component<Props>{
   // Data fetching
 
   _getAPI = (sessionId, charString) => {
-    fetch('http://benz-prints.com:3004/dnd/charMoney/' + sessionId + '/' + charString, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    })
-    .then((res) => res.json())
-    .then((resJ) => {
-      this.setState({copper: resJ.copper, silver: resJ.silver, electrum: resJ.electrum, gold: resJ.gold, platinum: resJ.platinum, isLoading: false});
-    })
-    .catch((error) => {
-      alert(error);
+    getData("ip").then((ip) => {
+      fetch(ip + 'charMoney/' + sessionId + '/' + charString, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      .then((res) => res.json())
+      .then((resJ) => {
+        this.setState({copper: resJ.copper, silver: resJ.silver, electrum: resJ.electrum, gold: resJ.gold, platinum: resJ.platinum, isLoading: false});
+      })
+      .catch((error) => {
+        alert(error);
+      });
     });
   }
 
   _postAPI = (sessionId, charString) => {
-    fetch('http://benz-prints.com:3004/dnd/charMoney/' + sessionId + '/' + charString, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        copper: this.state.copper,
-        silver: this.state.silver,
-        electrum: this.state.electrum,
-        gold: this.state.gold,
-        platinum: this.state.platinum
-      }),
+    getData("ip").then((ip) => {
+      fetch(ip + 'charMoney/' + sessionId + '/' + charString, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          copper: this.state.copper,
+          silver: this.state.silver,
+          electrum: this.state.electrum,
+          gold: this.state.gold,
+          platinum: this.state.platinum
+        }),
+      });
     });
   }
 }

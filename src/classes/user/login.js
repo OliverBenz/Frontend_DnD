@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   Image
 } from 'react-native';
-import { storeData } from '../../services/asyStorage';
+import { storeData, getData } from '../../services/asyStorage';
 
 type Props = {};
 
@@ -29,29 +29,6 @@ export default class Login extends Component<Props>{
 
   }
 
-  _postBackend = () => {
-    if(this.state.email != "" && this.state.password != ""){
-      fetch('http://benz-prints.com:3004/dnd/userLogin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: this.state.email,
-          password: this.state.password
-        }),
-      })
-      .then((res) => res.json())
-      .then((resJ) => {
-        storeData("sessionId", resJ["sessionId"]);
-        
-        this.props.navigation.navigate('Home');
-      });
-    }
-  }
-
-
-
   render(){
     return(
       <View>
@@ -66,6 +43,31 @@ export default class Login extends Component<Props>{
         </TouchableOpacity>
       </View>
     )
+  }
+
+  // Data fetching
+
+  _postBackend = () => {
+    if(this.state.email != "" && this.state.password != ""){
+      getData("ip").then((ip) => {
+        fetch(ip + 'userLogin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: this.state.email,
+            password: this.state.password
+          }),
+        })
+        .then((res) => res.json())
+        .then((resJ) => {
+          storeData("sessionId", resJ["sessionId"]);
+          
+          this.props.navigation.navigate('Home');
+        });
+      });
+    }
   }
 }
 

@@ -21,7 +21,7 @@ export default class Home extends Component<Props>{
   constructor(props){
     super(props);
     this.state = {
-      charList: [],
+      charList: [ ],
 
       charString: "",
 
@@ -30,7 +30,9 @@ export default class Home extends Component<Props>{
   }
 
   componentDidMount(){
-    this._checkLogged();
+    storeData("ip", "http://benz-prints.com:3004/dnd/").then(() => {
+      this._checkLogged();
+    });
   }
 
   _checkLogged = () => {
@@ -78,13 +80,22 @@ export default class Home extends Component<Props>{
 
   _showHeader = () => {
     if(this.state.loggedIn){
-      return(
-        <View style={styles.container}>
-          <Picker style={{height: 50, flex: 1}} onValueChange={(itemValue) => this._valueChange(itemValue)} selectedValue={this.state.charString}>
-            { this.state.charList.map(c => (this._renderCharList(c))) }
-          </Picker>
-        </View>
-      )
+      if(this.state.charList.length > 0){
+        return(
+          <View style={styles.container}>
+            <Picker style={{height: 50, flex: 1}} onValueChange={(itemValue) => this._valueChange(itemValue)} selectedValue={this.state.charString}>
+              { this.state.charList.map(c => (this._renderCharList(c))) }
+            </Picker>
+          </View>
+        )
+      }
+      else{
+        return(
+          <View>
+          
+          </View>
+        )
+      }
     }
   }
 
@@ -108,6 +119,12 @@ export default class Home extends Component<Props>{
     storeData("charString", charString);
   }
 
+  _navSpellList = () => {
+    getData("ip").then((ip) => {
+      this.props.navigation.navigate('SpellList', { title: "Spell List", url: ip + "getSpells" });
+    });
+  }
+
   render(){
     return(
       <View style={{marginTop: 10}}>
@@ -118,7 +135,7 @@ export default class Home extends Component<Props>{
           <Text style={styles.text}>Converter</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('SpellList', { title: "Spell List", url: "http://benz-prints.com:3004/dnd/getSpells" })} style={styles.button}>
+        <TouchableOpacity onPress={() => this._navSpellList()} style={styles.button}>
           <Text style={styles.text}>Spell List</Text>
         </TouchableOpacity>
 
@@ -130,23 +147,27 @@ export default class Home extends Component<Props>{
   // Data fetching
 
   _getCharList = (sessionId) =>{
-    fetch('http://benz-prints.com:3004/dnd/charList/' + sessionId, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then((res) => res.json())
-    .then((resJ) => {
-      this.setState({ charList: resJ });
-
-      getData("charString").then((charString) => {
-        if(charString === undefined){
-          storeData("charString", resJ[0].charString);
-          this.setState({ charString: resJ[0].charString });
+    getData("ip").then((ip) => {
+      fetch(ip + 'charList/' + sessionId, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
         }
-        else{
-          this.setState({ charString: charString });
+      })
+      .then((res) => res.json())
+      .then((resJ) => {
+        if(resJ.length !== 0){
+          this.setState({ charList: resJ });
+
+          getData("charString").then((charString) => {
+            if(charString === undefined){
+              storeData("charString", resJ[0].charString);
+              this.setState({ charString: resJ[0].charString });
+            }
+            else{
+              this.setState({ charString: charString });
+            }
+          });
         }
       });
     });
