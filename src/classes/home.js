@@ -48,7 +48,7 @@ export default class Home extends Component<Props>{
 
   // ShowButtons
   _showButtons = () => {
-    if(this.state.loggedIn === true){
+    if(this.state.loggedIn){
       return(
         <View>
           <TouchableOpacity onPress={() => this.props.navigation.navigate('Character')} style={styles.button}>
@@ -76,6 +76,18 @@ export default class Home extends Component<Props>{
     }
   }
 
+  _showHeader = () => {
+    if(this.state.loggedIn){
+      return(
+        <View style={styles.container}>
+          <Picker style={{height: 50, flex: 1}} onValueChange={(itemValue) => this._valueChange(itemValue)} selectedValue={this.state.charString}>
+            { this.state.charList.map(c => (this._renderCharList(c))) }
+          </Picker>
+        </View>
+      )
+    }
+  }
+
   _logout = () => {
     remData("sessionId").then(() => {
       this._checkLogged();
@@ -95,12 +107,8 @@ export default class Home extends Component<Props>{
   render(){
     return(
       <View style={{marginTop: 10}}>
-        {/* Character Heading */}
-        <View style={styles.container}>
-          <Picker style={{height: 50, flex: 1}} onValueChange={(itemValue) => this._valueChange(itemValue)} selectedValue={this.state.charString}>
-            { this.state.charList.map(c => (this._renderCharList(c))) }
-          </Picker>
-        </View>
+
+        { this._showHeader() }
 
         <TouchableOpacity onPress={() => this.props.navigation.navigate('Converter')} style={styles.button}>
           <Text style={styles.text}>Converter</Text>
