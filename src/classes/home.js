@@ -90,7 +90,10 @@ export default class Home extends Component<Props>{
 
   _logout = () => {
     remData("sessionId").then(() => {
-      this._checkLogged();
+      remData("charString").then(() => {
+        this.setState({ charList: [] });
+        this._checkLogged();
+      });
     });
   }
 
@@ -151,10 +154,10 @@ export default class Home extends Component<Props>{
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 40,
+    marginBottom: 10,
 
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
 
     flexDirection: 'row',
     justifyContent: 'center',
