@@ -17,8 +17,6 @@ export default class Health extends Component<Props>{
     super(props);
 
     this.state = {
-      fetchAttempts: 0,
-
       maxHealth: 0,
       currentHealth: 0,
       tempHealth: 0,
@@ -79,15 +77,7 @@ export default class Health extends Component<Props>{
     })
     .then((res) => res.json())
     .then((resJ) => {
-      if(resJ.maxHealth !== undefined && resJ.currentHealth !== undefined && resJ.tempHealth !== undefined){
-        this.setState({maxHealth: resJ.maxHealth, currentHealth: resJ.currentHealth, tempHealth: resJ.tempHealth, isLoading: false});
-      }
-      else{
-        if(this.state.fetchAttempts <= 5){
-          this.setState({ fetchAttempts: this.state.fetchAttempts + 1 });
-          this._getAPI();
-        }
-      }
+      this.setState({maxHealth: resJ.maxHealth, currentHealth: resJ.currentHealth, tempHealth: resJ.tempHealth, isLoading: false});
     })
     .catch((error) => {
       alert(error)

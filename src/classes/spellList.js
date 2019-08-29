@@ -57,39 +57,6 @@ export default class SpellList extends Component<Props>{
     this.props.navigation.navigate('SpellSpecific', { spell: spell });
   };
 
-  _filterSpells = (filter) => {
-    this.setState({search: filter});
-
-    let spells = this.state.spellList;
-    for(let i = 0; i < spells.length; i++){
-      // To Upper Case function needed because .includes function is case sensitive
-      if (! spells[i].name.toUpperCase().includes(filter.toUpperCase())){
-        spells[i].show = false;
-      }
-      else{
-        spells[i].show = true;
-      }
-    }
-    this.setState({spellList: spells});
-  };
-
-  _clearFilter = () => {
-    let spells = this.state.spellList;
-    for(let i = 0; i < spells.length; i++){
-      spells[i].show = true;
-    }
-    this.setState({spellList: spells, search: ""});
-  }
-
-  _findArrIndex = (id) => {
-    for(let i = 0; i < this.state.spellList.length; i++){
-      if(this.state.spellList[i].id == id){
-        return i;
-      }
-    }
-    return -1;
-  };
-
   _renderElement = (s) => {
     if(s.show){
       return (
@@ -136,14 +103,51 @@ export default class SpellList extends Component<Props>{
         </View>
 
         {
-          this.state.spellList.map(s => (
-            this._renderElement(s)
-          ))
+          this.state.spellList.map(s => ( this._renderElement(s) ))
         }
 
       </ScrollView>
     );
   }
+
+  // Filter Functions
+
+  _filterSpells = (filter) => {
+    this.setState({search: filter});
+
+    let spells = this.state.spellList;
+    for(let i = 0; i < spells.length; i++){
+      // To Upper Case function needed because .includes function is case sensitive
+      if (! spells[i].name.toUpperCase().includes(filter.toUpperCase())){
+        spells[i].show = false;
+      }
+      else{
+        spells[i].show = true;
+      }
+    }
+    this.setState({spellList: spells});
+  };
+
+  _clearFilter = () => {
+    let spells = this.state.spellList;
+    for(let i = 0; i < spells.length; i++){
+      spells[i].show = true;
+    }
+    this.setState({spellList: spells, search: ""});
+  }
+
+  // Helper Functions
+
+  _findArrIndex = (id) => {
+    for(let i = 0; i < this.state.spellList.length; i++){
+      if(this.state.spellList[i].id == id){
+        return i;
+      }
+    }
+    return -1;
+  };
+
+
 }
 
 const styles = StyleSheet.create({

@@ -9,7 +9,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-import { getData, storeData } from '../services/asyStorage';
+import { getData } from '../services/asyStorage';
 
 import Money from './character/money';
 import Health from './character/health';
@@ -25,65 +25,29 @@ export default class Character extends Component<Props>{
   constructor(props){
     super(props);
 
-    this.state = {
-      charList: [],
-      charString: "",
-      sessionId: ""
-    };
+    this.state = { };
   }
 
-  _renderCharList = (c) => {
-    return(
-      <Picker.Item key={c.charString} label={c.firstname + " " + c.lastname + " - Lvl: " + c.level} value={c.charString} />
-    )
-  }
-
-  _valueChange = (value) => {
-    this.setState({ charString: value });
-    storeData("charString", value);
+  _navSpells = () => {
+    getData("sessionId").then((sessionId) => {
+      getData("charString").then((charString) => {
+        this.props.navigation.navigate('SpellList', { title: "Spell List", url: "http://benz-prints.com:3004/dnd/charSpells/" + sessionId + "/" + charString });
+      });
+    });
   }
 
   render(){
     return(
       <View>
-        {/* Heading */}
-        <View style={styles.container}>
-
-        </View>
-
+        <General />
         <Health />
         <Money />
 
-        <TouchableOpacity style={styles.button} onPress={() => {}}>
+        <TouchableOpacity style={styles.button} onPress={() => this._navSpells()}>
           <Text>Spells</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button} onPress={() => {}}>
-          <Text>Save</Text>
-        </TouchableOpacity>      
       </View>
     )
-  }
-
-  // Data Fetching
-
-  _fetchCharList = (sessionId) => {
-    fetch('http://benz-prints.com:3004/dnd/charList/' + sessionId, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then((res) => res.json())
-    .then((resJ) => {
-      this.setState({ charList: resJ, isLoading: false });
-
-      getData("charString").then((res) => {
-        if(res === null){
-          storeData("charString", resJ[0].charString);
-        }
-      });
-    });
   }
 }
 

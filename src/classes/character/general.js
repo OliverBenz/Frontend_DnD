@@ -6,7 +6,7 @@ import {
   View
 } from 'react-native';
 
-import { storeData, getData } from '../../services/asyStorage';
+import { getData } from '../../services/asyStorage';
 
 type Props = {};
 

@@ -89,6 +89,7 @@ export default class Home extends Component<Props>{
   }
 
   _logout = () => {
+    // Clear: sessionId, charString, charList
     remData("sessionId").then(() => {
       remData("charString").then(() => {
         this.setState({ charList: [] });
