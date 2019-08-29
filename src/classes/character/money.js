@@ -32,10 +32,19 @@ export default class Money extends Component<Props>{
     this.setState({ isLoading: true });
 
     getData("sessionId").then((sessionId) => {
-      getData("charString").then((charString) =>{
+      getData("charString").then((charString) => {
+        this.setState({ sessionId: sessionId, charString: charString });
         this._getAPI(sessionId, charString);
       });
     });    
+  }
+
+  componentWillUnmount(){
+    getData("sessionId").then((sessionId) => {
+      getData("charString").then((charString) => {
+        this._postAPI(sessionId, charString);
+      });
+    });
   }
 
   render(){
@@ -81,6 +90,22 @@ export default class Money extends Component<Props>{
     })
     .catch((error) => {
       alert(error);
+    });
+  }
+
+  _postAPI = (sessionId, charString) => {
+    fetch('http://benz-prints.com:3004/dnd/charMoney/' + sessionId + '/' + charString, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        copper: this.state.copper,
+        silver: this.state.silver,
+        electrum: this.state.electrum,
+        gold: this.state.gold,
+        platinum: this.state.platinum
+      }),
     });
   }
 }

@@ -17,6 +17,8 @@ export default class Health extends Component<Props>{
     super(props);
 
     this.state = {
+      fetchAttempts: 0,
+
       maxHealth: 0,
       currentHealth: 0,
       tempHealth: 0,
@@ -31,6 +33,14 @@ export default class Health extends Component<Props>{
     getData("sessionId").then((sessionId) => {
       getData("charString").then((charString) =>{
         this._getAPI(sessionId, charString);
+      });
+    });
+  }
+
+  componentWillUnmount(){
+    getData("sessionId").then((sessionId) => {
+      getData("charString").then((charString) =>{
+        this._postAPI(sessionId, charString);
       });
     });
   }
@@ -69,10 +79,32 @@ export default class Health extends Component<Props>{
     })
     .then((res) => res.json())
     .then((resJ) => {
-      this.setState({maxHealth: resJ.maxHealth, currentHealth: resJ.currentHealth, tempHealth: resJ.tempHealth, isLoading: false});
+      if(resJ.maxHealth !== undefined && resJ.currentHealth !== undefined && resJ.tempHealth !== undefined){
+        this.setState({maxHealth: resJ.maxHealth, currentHealth: resJ.currentHealth, tempHealth: resJ.tempHealth, isLoading: false});
+      }
+      else{
+        if(this.state.fetchAttempts <= 5){
+          this.setState({ fetchAttempts: this.state.fetchAttempts + 1 });
+          this._getAPI();
+        }
+      }
     })
     .catch((error) => {
       alert(error)
+    });
+  }
+
+  _postAPI = (sessionId, charString) => {
+    fetch('http://benz-prints.com:3004/dnd/charHealth/' + sessionId + '/' + charString, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        maxHealth: this.state.maxHealth,
+        currentHealth: this.state.currentHealth,
+        tempHealth: this.state.tempHealth
+      }),
     });
   }
 }
