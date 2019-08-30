@@ -3,6 +3,7 @@
 import {
   createStackNavigator,
   createAppContainer,
+  createDrawerNavigator
 } from 'react-navigation';
 
 import Converter from './src/classes/converter';
@@ -15,6 +16,8 @@ import SpellSpecific from './src/classes/spellSpecific';
 
 import Login from './src/classes/user/login';
 import Register from './src/classes/user/register';
+import Account from './src/classes/user/account';
+import NewChar from './src/classes/user/newChar';
 
 const RootStack = createStackNavigator({
   Home: { screen: Home },
@@ -25,9 +28,29 @@ const RootStack = createStackNavigator({
   Character: { screen: Character },
 
   Login: { screen: Login },
-  Register: { screen: Register }
+  Register: { screen: Register },
+  Account: { screen: Account },
+  NewChar: { screen: NewChar }
 });
 
 const App = createAppContainer(RootStack);
 
 export default App;
+
+// const DrawerNavigator = createDrawerNavigator(
+//   {
+//     Home: { screen: Home },
+//     SpellList: { screen: SpellList }
+//   },
+//  {
+//     hideStatusBar: true,
+//     drawerBackgroundColor: 'rgba(255,255,255,.9)',
+//     overlayColor: '#6b52ae',
+//     contentOptions: {
+//       activeTintColor: '#fff',
+//       activeBackgroundColor: '#6b52ae',
+//     },
+//   }
+// );
+
+// export default createAppContainer(DrawerNavigator);

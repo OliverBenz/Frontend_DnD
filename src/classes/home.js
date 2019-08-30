@@ -15,7 +15,7 @@ type Props = {};
 
 export default class Home extends Component<Props>{
   static navigationOptions = {
-    title: 'Home',
+    title: 'Home'
   };
 
   constructor(props){
@@ -33,7 +33,11 @@ export default class Home extends Component<Props>{
     storeData("ip", "http://benz-prints.com:3004/dnd/").then(() => {
       this._checkLogged();
     });
+
+    // Check if login successful after navigation back to component
+    this.props.navigation.addListener('willFocus', this._checkLogged);
   }
+
 
   _checkLogged = () => {
     getData("sessionId").then((sessionId) => {
@@ -48,57 +52,6 @@ export default class Home extends Component<Props>{
     });
   }
 
-  // ShowButtons
-  _showButtons = () => {
-    if(this.state.loggedIn){
-      return(
-        <View>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('Character')} style={styles.button}>
-            <Text style={styles.text}>Character</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => this._logout()} style={styles.button}>
-            <Text style={styles.text}>Logout</Text>
-          </TouchableOpacity>
-        </View>
-      )
-    }
-    else{
-      return(
-        <View>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')} style={styles.button}>
-            <Text style={styles.text}>Login</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')} style={styles.button}>
-            <Text style={styles.text}>Register</Text>
-          </TouchableOpacity>
-        </View>
-      )
-    }
-  }
-
-  _showHeader = () => {
-    if(this.state.loggedIn){
-      if(this.state.charList.length > 0){
-        return(
-          <View style={styles.container}>
-            <Picker style={{height: 50, flex: 1}} onValueChange={(itemValue) => this._valueChange(itemValue)} selectedValue={this.state.charString}>
-              { this.state.charList.map(c => (this._renderCharList(c))) }
-            </Picker>
-          </View>
-        )
-      }
-      else{
-        return(
-          <View>
-          
-          </View>
-        )
-      }
-    }
-  }
-
   _logout = () => {
     // Clear: sessionId, charString, charList
     remData("sessionId").then(() => {
@@ -109,11 +62,6 @@ export default class Home extends Component<Props>{
     });
   }
 
-  _renderCharList = (c) => {
-    return(
-      <Picker.Item key={c.charString} label={c.firstname + " " + c.lastname + " - Lvl: " + c.level} value={c.charString} />
-    )
-  }
   _valueChange = (charString) => {
     this.setState({ charString: charString });
     storeData("charString", charString);
@@ -128,9 +76,10 @@ export default class Home extends Component<Props>{
   render(){
     return(
       <View style={{marginTop: 10}}>
-
         { this._showHeader() }
 
+        { this._showCharacter() }
+        
         <TouchableOpacity onPress={() => this.props.navigation.navigate('Converter')} style={styles.button}>
           <Text style={styles.text}>Converter</Text>
         </TouchableOpacity>
@@ -142,10 +91,76 @@ export default class Home extends Component<Props>{
         <TouchableOpacity onPress={() => this._navSpellList()} style={styles.button}>
           <Text style={styles.text}>Spell List</Text>
         </TouchableOpacity>
-
-        { this._showButtons() }
       </View>
     );
+  }
+
+  // Render functions
+  _showHeader = () => {
+    if(this.state.loggedIn){
+      if(this.state.charList.length > 0){
+        return(
+          <View>
+            { this._loadLoggedInButtons() }
+
+            <View style={styles.container}>
+              <Picker style={{height: 50, flex: 1}} onValueChange={(itemValue) => this._valueChange(itemValue)} selectedValue={this.state.charString}>
+                { this.state.charList.map(c => (this._renderCharList(c))) }
+              </Picker>
+            </View>
+          </View>
+        )
+      }
+      else{
+        return(
+          <View>
+            { this._loadLoggedInButtons() }
+          </View>        
+        )
+      }
+    }
+    else{
+      return(
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')} style={{flex: 1}}>
+            <Text style={styles.text}>Login</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')} style={{flex: 1}}>
+            <Text style={styles.text}>Register</Text>
+          </TouchableOpacity>
+        </View>
+      )
+    }
+  }
+  _showCharacter = () => {
+    if(this.state.loggedIn){
+      return(
+        <View>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('Character')} style={styles.button}>
+            <Text style={styles.text}>Character</Text>
+          </TouchableOpacity>
+        </View>
+      )
+    }
+  }
+  _loadLoggedInButtons = () => {
+    return(
+      <View style={{flexDirection: 'row', marginBottom: 20}}>
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('Account', { charList: this.state.charList })} style={{flex: 1}}>
+          <Text style={[styles.text, {paddingLeft: 10}]}>Account</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity onPress={() => this._logout()} style={{flex: 1}}>
+          <Text style={[styles.text, {textAlign: 'right', paddingRight: 10}]}>Logout</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+  _renderCharList = (c) => {
+    return(
+      <Picker.Item key={c.charString} label={c.firstname + " " + c.lastname + " - Lvl: " + c.level} value={c.charString} />
+    )
   }
 
   // Data fetching
