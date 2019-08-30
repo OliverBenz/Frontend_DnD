@@ -5,6 +5,7 @@ import {
   StyleSheet,
   View
 } from 'react-native';
+import Counter from '../components/counter';
 
 type Props = {};
 
@@ -25,7 +26,7 @@ export default class Tracker extends Component<Props>{
     // TODO: 
     return(
       <View>
-      
+        <Counter />
       </View>
     )
   }
