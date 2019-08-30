@@ -12,7 +12,6 @@ import { storeData, getData, remData } from '../services/asyStorage';
 
 type Props = {};
 
-
 export default class Home extends Component<Props>{
   static navigationOptions = {
     title: 'Home'
@@ -30,7 +29,7 @@ export default class Home extends Component<Props>{
   }
 
   componentDidMount(){
-    storeData("ip", "http://benz-prints.com:3004/dnd/").then(() => {
+    storeData("ip", "http://206.81.26.204:3004/dnd/").then(() => {
       this._checkLogged();
     });
 

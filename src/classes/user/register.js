@@ -35,24 +35,24 @@ export default class Login extends Component<Props>{
     return(
       <View style={{flexDirection: 'column'}}>
         <View style={{flexDirection: 'row'}}>
-          <Text style={styles.text}>Firstname: </Text>
+          {/* <Text style={styles.text}>Firstname: </Text> */}
           <CustomInput style={styles.input} onChange={(e) => this.setState({ firstname: e.nativeEvent.text })} value={this.state.firstname} placeholder="Firstname" />
 
-          <Text style={styles.text}>Lastname: </Text>
+          {/* <Text style={styles.text}>Lastname: </Text> */}
           <CustomInput style={styles.input} onChange={(e) => this.setState({ lastname: e.nativeEvent.text })} value={this.state.lastname} placeholder="Lastname" />
         </View>
 
         <View style={{flexDirection: 'row'}}>
-          <Text style={styles.text}>E-Mail: </Text>
-          <CustomInput style={styles.input} onChange={(e) => this.setState({ email: e.nativeEvent.text })} value={this.state.email} />
+          {/* <Text style={styles.text}>E-Mail: </Text> */}
+          <CustomInput style={styles.input} onChange={(e) => this.setState({ email: e.nativeEvent.text })} value={this.state.email} placeholder="E-Mail" />
         </View>
 
         <View style={{flexDirection: 'row'}}>
-          <Text style={styles.text}>Password: </Text>
-          <CustomInput style={styles.input} onChange={(e) => this.setState({ password: e.nativeEvent.text })} value={this.state.password} secureTextEntry={true} />
+          {/* <Text style={styles.text}>Password: </Text> */}
+          <CustomInput style={styles.input} onChange={(e) => this.setState({ password: e.nativeEvent.text })} value={this.state.password} secureTextEntry={true} placeholder="Password" />
 
-          <Text style={styles.text}>Repeat Password: </Text>
-          <CustomInput style={styles.input} onChange={(e) => this.setState({ passwordCheck: e.nativeEvent.text })} value={this.state.passwordCheck} secureTextEntry={true} />
+          {/* <Text style={styles.text}>Repeat Password: </Text> */}
+          <CustomInput style={styles.input} onChange={(e) => this.setState({ passwordCheck: e.nativeEvent.text })} value={this.state.passwordCheck} secureTextEntry={true} placeholder="Repeat Password" />
         </View>
 
         <TouchableOpacity style={styles.button} onPress={() => this._registerAPI()}>

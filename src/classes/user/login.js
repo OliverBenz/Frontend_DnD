@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 import { storeData, getData } from '../../services/asyStorage';
 
+import CustomInput from '../../components/textInput';
+
 type Props = {};
 
 export default class Login extends Component<Props>{
@@ -32,12 +34,9 @@ export default class Login extends Component<Props>{
   render(){
     return(
       <View>
-        <Text>E-Mail: </Text>
-        <TextInput onChange={(e) => this.setState({ email: e.nativeEvent.text })} value={this.state.email} />
-
-        <Text>Password: </Text>
-        <TextInput onChange={(e) => this.setState({ password: e.nativeEvent.text })} value={this.state.password} secureTextEntry={true} />
-
+        <CustomInput style={{marginTop: 10, marginBottom: 10}} onChange={(e) => this.setState({ email: e.nativeEvent.text })} value={this.state.email} placeholder="E-Mail" />
+        <CustomInput style={{marginTop: 10, marginBottom: 10}} onChange={(e) => this.setState({ password: e.nativeEvent.text })} value={this.state.password} placeholder="Password" secureTextEntry={true} />
+        
         <TouchableOpacity style={styles.button} onPress={() => this._postBackend()}>
           <Text>Login</Text>
         </TouchableOpacity>
