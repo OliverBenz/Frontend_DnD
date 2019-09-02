@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
+  ScrollView,
   TouchableOpacity,
   Image,
   Text,
@@ -26,12 +27,21 @@ export default class Account extends Component<Props>{
     }
   }
 
+  _deleteChar = (charString) => {
+    // TODO: Check for password before deleting
+    this._delCharAPI(charString);
+    // Delete char from charList
+  }
+  _editChar = (charString) => {
+    alert(charString);
+  }
+
   render(){
     const { params } = this.props.navigation.state;
     // alert(params);
 
     return(
-      <View>
+      <ScrollView>
         {/* List of chars */}
         <View>
 
@@ -42,7 +52,7 @@ export default class Account extends Component<Props>{
             <Text style={styles.text}>Add new character</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     );
   }
 
@@ -55,16 +65,36 @@ export default class Account extends Component<Props>{
         </View>
 
         <View styles={{flexDirection: 'column'}}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={() => this._deleteChar(c.charString)}>
             <Text>Delete</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={() => this._editChar(c.charString)}>
             <Text>Edit</Text>
           </TouchableOpacity>
         </View>
       </View>
     );
+  }
+
+  // Data fetching
+
+  _delCharAPI = (charString) => {
+    getData("ip").then((ip) => {
+      getData("sessionId").then((sessionId) => {
+        fetch(ip + "userChar" + sessionId, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            "charString": charString
+          })
+        })
+        .then((res) => res.json)
+        .then((resJ) => alert(resJ));
+      });
+    });
   }
 }
 

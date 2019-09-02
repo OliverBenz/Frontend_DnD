@@ -119,8 +119,8 @@ export default class NewChar extends Component<Props>{
           <View>
             <CustomInput style={styles.input} placeholder="Firstname" onChange={(e) => this.setState({ firstname: e.nativeEvent.text })} value={this.state.firstname} />
             <CustomInput style={styles.input} placeholder="Lastname" onChange={(e) => this.setState({ lastname: e.nativeEvent.text })} value={this.state.lastname} />
-            <CustomInput style={styles.input} placeholder="Level" onChange={(e) => this.setState({ level: e.nativeEvent.text })} value={this.state.level} />
-            <CustomInput style={styles.input} placeholder="XP" onChange={(e) => this.setState({ xp: e.nativeEvent.text })} value={this.state.xp} />  
+            <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Level" onChange={(e) => this.setState({ level: e.nativeEvent.text })} value={this.state.level} />
+            <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="XP" onChange={(e) => this.setState({ xp: e.nativeEvent.text })} value={this.state.xp} />  
           </View>
         )
       
@@ -129,29 +129,29 @@ export default class NewChar extends Component<Props>{
           <View>
             <CustomInput style={styles.input} placeholder="Background" onChange={(e) => this.setState({ background: e.nativeEvent.text })} value={this.state.background} />
             {/* TODO: Add picker with alignment */}
-            <CustomInput style={styles.input} placeholder="Age" onChange={(e) => this.setState({ age: e.nativeEvent.text })} value={this.state.age} />
-            <CustomInput style={styles.input} placeholder="Height" onChange={(e) => this.setState({ height: e.nativeEvent.text })} value={this.state.height} />
-            <CustomInput style={styles.input} placeholder="Weight" onChange={(e) => this.setState({ weight: e.nativeEvent.text })} value={this.state.weight} />  
+            <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Age" onChange={(e) => this.setState({ age: e.nativeEvent.text })} value={this.state.age} />
+            <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Height" onChange={(e) => this.setState({ height: e.nativeEvent.text })} value={this.state.height} />
+            <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Weight" onChange={(e) => this.setState({ weight: e.nativeEvent.text })} value={this.state.weight} />  
           </View>
         )
       
       case 3:
         return(
           <View>
-            <CustomInput style={styles.input} placeholder="Maximum HP" onChange={(e) => this.setState({ maxHealth: e.nativeEvent.text })} value={this.state.maxHealth} />
-            <CustomInput style={styles.input} placeholder="Temporary HP" onChange={(e) => this.setState({ tempHealth: e.nativeEvent.text })} value={this.state.tempHealth} />
-            <CustomInput style={styles.input} placeholder="Current HP" onChange={(e) => this.setState({ currentHealth: e.nativeEvent.text })} value={this.state.currentHealth} />  
+            <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Maximum HP" onChange={(e) => this.setState({ maxHealth: e.nativeEvent.text })} value={this.state.maxHealth} />
+            <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Temporary HP" onChange={(e) => this.setState({ tempHealth: e.nativeEvent.text })} value={this.state.tempHealth} />
+            <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Current HP" onChange={(e) => this.setState({ currentHealth: e.nativeEvent.text })} value={this.state.currentHealth} />  
           </View>
         )
       
       case 4:
         return(
           <View>
-            <CustomInput style={styles.input} placeholder="Copper" onChange={(e) => this.setState({ copper: e.nativeEvent.text })} value={this.state.copper} />
-            <CustomInput style={styles.input} placeholder="Silver" onChange={(e) => this.setState({ silver: e.nativeEvent.text })} value={this.state.silver} />
-            <CustomInput style={styles.input} placeholder="Electrum" onChange={(e) => this.setState({ electrum: e.nativeEvent.text })} value={this.state.electrum} />
-            <CustomInput style={styles.input} placeholder="Gold" onChange={(e) => this.setState({ gold: e.nativeEvent.text })} value={this.state.gold} />
-            <CustomInput style={styles.input} placeholder="Platinum" onChange={(e) => this.setState({ platinum: e.nativeEvent.text })} value={this.state.platinum} />  
+            <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Copper" onChange={(e) => this.setState({ copper: e.nativeEvent.text })} value={this.state.copper} />
+            <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Silver" onChange={(e) => this.setState({ silver: e.nativeEvent.text })} value={this.state.silver} />
+            <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Electrum" onChange={(e) => this.setState({ electrum: e.nativeEvent.text })} value={this.state.electrum} />
+            <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Gold" onChange={(e) => this.setState({ gold: e.nativeEvent.text })} value={this.state.gold} />
+            <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Platinum" onChange={(e) => this.setState({ platinum: e.nativeEvent.text })} value={this.state.platinum} />  
           </View>
         )
     }
@@ -174,7 +174,7 @@ export default class NewChar extends Component<Props>{
   _postCharacter = () => {
     getData("ip").then((ip) => {
       getData("sessionId").then((sessionId) => {
-        fetch(ip + "userChar", {
+        fetch(ip + "userChar/" + sessionId, {
           method: "POST",
           headers: {
             'Content-Type': 'application/json'
@@ -186,6 +186,7 @@ export default class NewChar extends Component<Props>{
             xp: this.state.xp,
             
             background: this.state.background,
+            alignment: 1,
             age: this.state.age,
             height: this.state.height,
             weight: this.state.weight,
@@ -202,7 +203,10 @@ export default class NewChar extends Component<Props>{
           })
         })
         .then((res) => res.json())
-        .then((resJ) => alert(resJ));
+        .then((resJ) => {
+          storeData("charString", resJ["charString"]);
+          this.props.navigation.navigate("Home");
+        });
       });
     });
   }
