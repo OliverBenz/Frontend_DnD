@@ -27,9 +27,27 @@ export default class Account extends Component<Props>{
     }
   }
 
+  componentDidMount(){
+    this.setState({charList: this.props.navigation.state.params.charList});
+  }
+
   _deleteChar = (charString) => {
-    // TODO: Check for password before deleting
-    this._delCharAPI(charString);
+    // TODO: Function that checks if the user really wants to delete
+    // User has to imput password
+    if(false){
+      this._delCharAPI(charString);
+
+      // Delete char from charList
+      let charList = this.state.charList;
+      for(let i = 0; i < charList.length; i++){
+        if(charList[i]["charString"] == charString){
+          charList.splice(i, 1);
+          this.setState({ charList });
+          break;
+        }
+      }
+    }
+    
     // Delete char from charList
   }
   _editChar = (charString) => {
@@ -37,15 +55,12 @@ export default class Account extends Component<Props>{
   }
 
   render(){
-    const { params } = this.props.navigation.state;
-    // alert(params);
-
     return(
       <ScrollView>
         {/* List of chars */}
         <View>
 
-          { params.charList.map(c => ( this._renderChars(c) )) }
+          { this.state.charList.map(c => ( this._renderChars(c) )) }
 
           <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', margin: 10}} onPress={() => this.props.navigation.navigate("NewChar")}>
             <Image source={require('../../resources/icons/add.png')} style={{marginRight: 10}} />
@@ -82,7 +97,7 @@ export default class Account extends Component<Props>{
   _delCharAPI = (charString) => {
     getData("ip").then((ip) => {
       getData("sessionId").then((sessionId) => {
-        fetch(ip + "userChar" + sessionId, {
+        fetch(ip + "userChar/" + sessionId, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json'
@@ -90,9 +105,7 @@ export default class Account extends Component<Props>{
           body: JSON.stringify({
             "charString": charString
           })
-        })
-        .then((res) => res.json)
-        .then((resJ) => alert(resJ));
+        });
       });
     });
   }
