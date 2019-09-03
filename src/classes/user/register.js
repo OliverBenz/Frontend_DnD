@@ -8,7 +8,7 @@ import {
   TextInput,
   TouchableOpacity
 } from 'react-native';
-import { storeData } from '../../services/asyStorage';
+import { storeData, getData } from '../../services/asyStorage';
 
 import CustomInput from '../../components/textInput';
 
