@@ -26,13 +26,14 @@ export default class NewChar extends Component<Props>{
       page: 1,
 
       alignments: [],
+      backgrounds: [],
 
       firstname: "",
       lastname: "",
       level: undefined,
       xp: undefined,
 
-      background: "",
+      background: undefined,
       alignment: undefined,
       age: undefined,
       height: undefined,
@@ -54,6 +55,7 @@ export default class NewChar extends Component<Props>{
 
   componentDidMount(){
     this._getAlignments();
+    this._getBackgrounds();
   }
 
   _switchPage = (value) => {
@@ -133,7 +135,10 @@ export default class NewChar extends Component<Props>{
             <Picker style={{marginRight: 40}} onValueChange={(value) => this.setState({alignment: value})} selectedValue={this.state.alignment}>
               { this.state.alignments.map(a => <Picker.Item key={a.id} label={a.name} value={a.id} />) }
             </Picker>
-            <CustomInput style={styles.input} placeholder="Background" onChange={(e) => this.setState({ background: e.nativeEvent.text })} value={this.state.background} />
+            <Picker style={{marginRight: 40}} onValueChange={(value) => this.setState({background: value})} selectedValue={this.state.background}>
+              { this.state.backgrounds.map(b => <Picker.Item key={b.id} label={b.name} value={b.id} />) }
+            </Picker>
+            {/* <CustomInput style={styles.input} placeholder="Background" onChange={(e) => this.setState({ background: e.nativeEvent.text })} value={this.state.background} /> */}
             <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Age" onChange={(e) => this.setState({ age: e.nativeEvent.text })} value={this.state.age} />
             <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Height" onChange={(e) => this.setState({ height: e.nativeEvent.text })} value={this.state.height} />
             <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Weight" onChange={(e) => this.setState({ weight: e.nativeEvent.text })} value={this.state.weight} />  
@@ -175,10 +180,22 @@ export default class NewChar extends Component<Props>{
       .then((resJ) => this.setState({ alignments: resJ, alignment: resJ[0]["id"] }));
     });
   }
+  
+  _getBackgrounds = () => {
+    getData("ip").then((ip) => {
+      fetch(ip + "backgrounds", {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      .then((res) => res.json())
+      .then((resJ) => this.setState({ backgrounds: resJ, background: resJ[0]["id"] }));
+    });
+  }
 
   _postCharacter = () => {
     if(this._checkValues()){
-      alert(JSON.stringify(this.state.alignment));
       getData("ip").then((ip) => {
         getData("sessionId").then((sessionId) => {
           fetch(ip + "userChar/" + sessionId, {
@@ -228,6 +245,10 @@ export default class NewChar extends Component<Props>{
       if(this.state.maxHealth === undefined) this.setState({ maxHealth: "0" });
       if(this.state.tempHealth === undefined) this.setState({ tempHealth: "0" });
       if(this.state.currentHealth === undefined) this.setState({ currentHealth: "0" });
+
+      if(this.state.age === undefined) this.setState({ age: "0" });
+      if(this.state.height === undefined) this.setState({ height: "0" });
+      if(this.state.weight === undefined) this.setState({ weight: "0" });
 
       if(this.state.copper === undefined) this.setState({ copper: "0" });
       if(this.state.silver === undefined) this.setState({ silver: "0" });

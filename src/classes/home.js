@@ -68,7 +68,8 @@ export default class Home extends Component<Props>{
 
   _navSpellList = () => {
     getData("ip").then((ip) => {
-      this.props.navigation.navigate('SpellList', { title: "Spell List", url: ip + "getSpells" });
+      // CharSpells for +/- Button in spellList
+      this.props.navigation.navigate('SpellList', { title: "Spell List", url: ip + "getSpells", charSpells: false});
     });
   }
 

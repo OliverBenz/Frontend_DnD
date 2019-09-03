@@ -35,43 +35,14 @@ export default class SpellList extends Component<Props>{
 
   componentDidMount(){
     this.setState({isLoading: true});
-    fetch(this.props.navigation.state.params.url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    })
-    .then((res) => res.json())
-    .then((resJ) => {
-      var spellList = resJ;
 
-      for(let i = 0; i < spellList.length; i++){
-        spellList[i].show = true;
-      }
-      this.setState({ spellList: spellList, isLoading: false });
-    });
+    this._getSpellList(this.props.navigation.state.params.url);
   }
 
   _inspectSpell = (id) => {
     let spell = this.state.spellList[this._findArrIndex(id)];
     this.props.navigation.navigate('SpellSpecific', { spell: spell });
   };
-
-  _renderElement = (s) => {
-    if(s.show){
-      return (
-        <TouchableOpacity key={s.id} style={styles.container} onPress={() => this._inspectSpell(s.id)}>
-          <View style={{flexDirection: 'row', marginBottom: 10}}>
-            <Text style={[styles.text, {flex: 3, marginRight: 5, paddingLeft: 5}]}>{s.name}</Text>
-            <Text style={[styles.text, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>{s.range}</Text>
-            <Text style={[styles.text, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>{s.castingTime}</Text>
-            <Text style={[styles.text, {flex: 1, marginLeft: 5, textAlign: 'center'}]}>{s.save}</Text>          
-          </View>
-          <Text style={[styles.text, {flex: 1, paddingLeft: 5}]}>{s.desc}</Text>
-        </TouchableOpacity>
-      )
-    }
-  }
 
   render(){
     if(this.state.isLoading){
@@ -80,11 +51,11 @@ export default class SpellList extends Component<Props>{
         <View style={{alignItems: 'center', justifyContent: 'center'}}>
          <ActivityIndicator size="large" color="#0000ff" />
         </View>
-        
       );
     }
+
     return(
-      <ScrollView style={{padding: 10, backgroundColor: '#ededed',}}>
+      <ScrollView style={{padding: 10, backgroundColor: '#ededed'}}>
 
         {/* Search Field */}
         <View style={styles.searchField}>
@@ -110,6 +81,22 @@ export default class SpellList extends Component<Props>{
     );
   }
 
+  _renderElement = (s) => {
+    if(s.show){
+      return (
+        <TouchableOpacity key={s.id} style={styles.container} onPress={() => this._inspectSpell(s.id)}>
+          <View style={{flexDirection: 'row', marginBottom: 10}}>
+            <Text style={[styles.text, {flex: 3, marginRight: 5, paddingLeft: 5}]}>{s.name}</Text>
+            <Text style={[styles.text, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>{s.range}</Text>
+            <Text style={[styles.text, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>{s.castingTime}</Text>
+            <Text style={[styles.text, {flex: 1, marginLeft: 5, textAlign: 'center'}]}>{s.save}</Text>          
+          </View>
+          <Text style={[styles.text, {flex: 1, paddingLeft: 5}]}>{s.desc}</Text>
+        </TouchableOpacity>
+      )
+    }
+  }
+
   // Filter Functions
 
   _filterSpells = (filter) => {
@@ -127,7 +114,7 @@ export default class SpellList extends Component<Props>{
     }
     this.setState({spellList: spells});
   };
-
+  
   _clearFilter = () => {
     let spells = this.state.spellList;
     for(let i = 0; i < spells.length; i++){
@@ -135,6 +122,28 @@ export default class SpellList extends Component<Props>{
     }
     this.setState({spellList: spells, search: ""});
   }
+
+  // Data fetching
+
+  _getSpellList = (url) => {
+    fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    .then((res) => res.json())
+    .then((resJ) => {
+      var spellList = resJ;
+
+      for(let i = 0; i < spellList.length; i++){
+        spellList[i].show = true;
+      }
+      this.setState({ spellList: spellList, isLoading: false });
+    });
+  }
+
+
 
   // Helper Functions
 

@@ -32,7 +32,8 @@ export default class Character extends Component<Props>{
     getData("sessionId").then((sessionId) => {
       getData("charString").then((charString) => {
         getData("ip").then((ip) => {
-          this.props.navigation.navigate('SpellList', { title: "Spell List", url: ip + "charSpells/" + sessionId + "/" + charString });
+          // CharSpells for +/- Button in spellList
+          this.props.navigation.navigate('SpellList', { title: "Spell List", url: ip + "charSpells/" + sessionId + "/" + charString, charSpells: true });
         });
       });
     });

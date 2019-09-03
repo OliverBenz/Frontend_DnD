@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   Image
 } from 'react-native';
+import { getData } from '../services/asyStorage';
 
 type Props = {};
 
@@ -24,12 +25,18 @@ export default class SpellSpecific extends Component<Props>{
 
   constructor(props){
     super(props);
-    this.state = { }
+    this.state = {
+      spell: {},
+      userHas: false
+    }
+  }
+
+  componentDidMount(){
+    this.setState({ spell: this.props.navigation.state.params.spell });
+    this._checkIfHas(this.props.navigation.state.params.spell.id);
   }
 
   render(){
-    const { params } = this.props.navigation.state;
-
     return(
       <ScrollView style={styles.container}>
         {/* Heading 1 */}
@@ -43,26 +50,87 @@ export default class SpellSpecific extends Component<Props>{
 
         {/* Spell Data Row 1 */}
         <View style={{flexDirection: 'row', marginBottom: 20}}>
-          <Text style={[styles.textBorder, {flex: 1, marginRight: 5, textAlign: 'center'}]}>{ params.spell.range }</Text>
-          <Text style={[styles.textBorder, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>{ params.spell.castingTime }</Text>
-          <Text style={[styles.textBorder, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>{ params.spell.save }</Text>
-          <Text style={[styles.textBorder, {flex: 3, marginLeft: 5}]}>{ params.spell.duration }</Text>
+          <Text style={[styles.textBorder, {flex: 1, marginRight: 5, textAlign: 'center'}]}>{ this.state.spell.range }</Text>
+          <Text style={[styles.textBorder, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>{ this.state.spell.castingTime }</Text>
+          <Text style={[styles.textBorder, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>{ this.state.spell.save }</Text>
+          <Text style={[styles.textBorder, {flex: 3, marginLeft: 5}]}>{ this.state.spell.duration }</Text>
         </View>
         
         {/* Heading 2 */}
         <View style={{flexDirection: 'row', marginBottom: 20}}>
-          {/* <Text style={[styles.text, {flex: 3, marginRight: 5}]}>Duration</Text> */}
           <Text style={[styles.text, {flex: 3}]}>Components</Text>
         </View>
+
         {/* Spell Data Row 2 */}
         <View style={{flexDirection: 'row', marginBottom: 20}}>
-          {/* <Text style={[styles.textBorder, {flex: 3, marginRight: 5}]}>{ params.spell.duration }</Text> */}
-          <Text style={[styles.textBorder, {flex: 3}]}>{ params.spell.components }</Text>
+          <Text style={[styles.textBorder, {flex: 3}]}>{ this.state.spell.components }</Text>
         </View>
 
-        <Text style={styles.textBorder}>{ params.spell.descLong }</Text>
+        <Text style={styles.textBorder}>{ this.state.spell.descLong }</Text>
+
+        { this._renderButton() }
       </ScrollView>
     );
+  }
+
+  _renderButton = () => {
+    if(!this.state.userHas){
+      return(
+        <TouchableOpacity style={styles.button} onPress={() => _updateCharSpells(this.state.spell.id, "POSt")}>
+          <Image source={require('../resources/icons/add.png')} style={{marginRight: 10}} />
+          <Text>Add to Character</Text>
+        </TouchableOpacity>
+      )
+    }
+    else{
+      return(
+        <TouchableOpacity style={styles.button} onPress={() => _updateCharSpells(this.state.spell.id, "DELETE")}>
+          <Image source={require('../resources/icons/clear.png')} style={{marginRight: 10}} />
+          <Text>Remove from Character</Text>
+        </TouchableOpacity>
+      )
+    }
+  }
+
+  // Data fetching
+
+  _checkIfHas = (spellId) => {
+    // Check if character has spell in list
+    getData("ip").then((ip) => {
+      getData("sessionId").then((sessionId) => {
+        getData("charString").then((charString) => {
+          fetch(ip + 'checkCharSpell' + "/" + sessionId + "/" + charString + "/" + spellId, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          .then((res) => res.json())
+          .then((resJ) => this.setState({ userHas: resJ["result"] }));
+        });
+      });
+    });
+  }
+
+  _updateCharSpells = (spellId, method) => {
+    getData("ip").then((ip) => {
+      getData("sessionId").then((sessionId) => {
+        getData("charString").then((charString) => {
+          
+          fetch(ip + 'charSpells/' + sessionId + "/" + charString, {
+            method: method,
+            headers: {
+              'Content-Type': 'appication/json'
+            },
+            body: JSON.stringify({
+              "spellId": spellId
+            })
+          })
+          .then((res) => res.json())
+          .then((resJ) => alert(resJ["message"]));
+        });
+      });
+    });
   }
 }
 
@@ -80,5 +148,10 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18
+  },
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20
   }
 });
