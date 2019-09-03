@@ -63,8 +63,6 @@ export default class NewChar extends Component<Props>{
         { this._renderPage() }
 
         { this._showButtons() }
-
-
       </View>
     )
   }
