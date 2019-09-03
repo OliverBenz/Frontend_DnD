@@ -107,6 +107,9 @@ export default class Home extends Component<Props>{
                 { this.state.charList.map(c => (this._renderCharList(c))) }
               </Picker>
             </View>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('Character')} style={styles.button}>
+              <Text style={styles.text}>Character</Text>
+            </TouchableOpacity>
           </View>
         )
       }
@@ -136,9 +139,7 @@ export default class Home extends Component<Props>{
     if(this.state.loggedIn){
       return(
         <View>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('Character')} style={styles.button}>
-            <Text style={styles.text}>Character</Text>
-          </TouchableOpacity>
+
         </View>
       )
     }

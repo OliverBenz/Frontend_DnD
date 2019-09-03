@@ -5,6 +5,7 @@ import {
   StyleSheet,
   View,
   Text,
+  Picker,
   TouchableOpacity
 } from 'react-native';
 import { storeData, getData } from '../../services/asyStorage';
@@ -49,6 +50,10 @@ export default class NewChar extends Component<Props>{
 
 
     };
+  }
+
+  componentDidMount(){
+    this._getAlignments();
   }
 
   _switchPage = (value) => {
@@ -125,8 +130,10 @@ export default class NewChar extends Component<Props>{
       case 2:
         return(
           <View>
+            <Picker style={{marginRight: 40}} onValueChange={(value) => this.setState({alignment: value})} selectedValue={this.state.alignment}>
+              { this.state.alignments.map(a => <Picker.Item key={a.id} label={a.name} value={a.id} />) }
+            </Picker>
             <CustomInput style={styles.input} placeholder="Background" onChange={(e) => this.setState({ background: e.nativeEvent.text })} value={this.state.background} />
-            {/* TODO: Add picker with alignment */}
             <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Age" onChange={(e) => this.setState({ age: e.nativeEvent.text })} value={this.state.age} />
             <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Height" onChange={(e) => this.setState({ height: e.nativeEvent.text })} value={this.state.height} />
             <CustomInput style={styles.input} keyboardType={'numeric'} placeholder="Weight" onChange={(e) => this.setState({ weight: e.nativeEvent.text })} value={this.state.weight} />  
@@ -165,48 +172,71 @@ export default class NewChar extends Component<Props>{
         }
       })
       .then((res) => res.json())
-      .then((resJ) => this.setState({ alignments: resJ }));
+      .then((resJ) => this.setState({ alignments: resJ, alignment: resJ[0]["id"] }));
     });
   }
 
   _postCharacter = () => {
-    getData("ip").then((ip) => {
-      getData("sessionId").then((sessionId) => {
-        fetch(ip + "userChar/" + sessionId, {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            firstname: this.state.firstname,
-            lastname: this.state.lastname,
-            level: this.state.level,
-            xp: this.state.xp,
-            
-            background: this.state.background,
-            alignment: 1,
-            age: this.state.age,
-            height: this.state.height,
-            weight: this.state.weight,
-            
-            maxHealth: this.state.maxHealth,
-            tempHealth: this.state.tempHealth,
-            currentHealth: this.state.currentHealth,
+    if(this._checkValues()){
+      alert(JSON.stringify(this.state.alignment));
+      getData("ip").then((ip) => {
+        getData("sessionId").then((sessionId) => {
+          fetch(ip + "userChar/" + sessionId, {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              firstname: this.state.firstname,
+              lastname: this.state.lastname,
+              level: this.state.level,
+              xp: this.state.xp,
+              
+              background: this.state.background,
+              alignment: this.state.alignment,
+              age: this.state.age,
+              height: this.state.height,
+              weight: this.state.weight,
+              
+              maxHealth: this.state.maxHealth,
+              tempHealth: this.state.tempHealth,
+              currentHealth: this.state.currentHealth,
 
-            copper: this.state.copper,
-            silver: this.state.silver,
-            electrum: this.state.electrum,
-            gold: this.state.gold,
-            platinum: this.state.platinum
+              copper: this.state.copper,
+              silver: this.state.silver,
+              electrum: this.state.electrum,
+              gold: this.state.gold,
+              platinum: this.state.platinum
+            })
           })
-        })
-        .then((res) => res.json())
-        .then((resJ) => {
-          storeData("charString", resJ["charString"]);
-          this.props.navigation.navigate("Home");
+          .then((res) => res.json())
+          .then((resJ) => {
+            storeData("charString", resJ["charString"]);
+            this.props.navigation.navigate("Home");
+          });
         });
       });
-    });
+    }
+  }
+
+  _checkValues = () => {
+    if(this.state.firstname === "" && this.state.lastname === "") return false;
+    else{
+      if(this.state.xp === undefined) this.setState({ xp: "0" });
+      if(this.state.level === undefined) this.setState({ level: "1" });
+      
+      if(this.state.maxHealth === undefined) this.setState({ maxHealth: "0" });
+      if(this.state.tempHealth === undefined) this.setState({ tempHealth: "0" });
+      if(this.state.currentHealth === undefined) this.setState({ currentHealth: "0" });
+
+      if(this.state.copper === undefined) this.setState({ copper: "0" });
+      if(this.state.silver === undefined) this.setState({ silver: "0" });
+      if(this.state.electrum === undefined) this.setState({ electrum: "0" });
+      if(this.state.gold === undefined) this.setState({ gold: "0" });
+      if(this.state.platinum === undefined) this.setState({ platinum: "0" });
+ 
+      return true;
+    }
   }
 }
 
