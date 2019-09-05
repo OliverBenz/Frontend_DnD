@@ -11,6 +11,7 @@ import Tracker from './src/classes/tracker';
 
 import Home from './src/classes/home';
 import Character from './src/classes/character';
+import Notes from './src/classes/character/notes';
 import SpellList from './src/classes/spellList';
 import SpellSpecific from './src/classes/spellSpecific';
 
@@ -26,6 +27,7 @@ const RootStack = createStackNavigator({
   Tracker: { screen: Tracker },
   SpellSpecific: { screen: SpellSpecific },
   Character: { screen: Character },
+  Notes: { screen: Notes },
 
   Login: { screen: Login },
   Register: { screen: Register },

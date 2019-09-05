@@ -76,7 +76,7 @@ export default class SpellSpecific extends Component<Props>{
   _renderButton = () => {
     if(!this.state.userHas){
       return(
-        <TouchableOpacity style={styles.button} onPress={() => _updateCharSpells(this.state.spell.id, "POSt")}>
+        <TouchableOpacity style={styles.button} onPress={() => this._updateCharSpells(this.state.spell.id, "POST")}>
           <Image source={require('../resources/icons/add.png')} style={{marginRight: 10}} />
           <Text>Add to Character</Text>
         </TouchableOpacity>
@@ -84,7 +84,7 @@ export default class SpellSpecific extends Component<Props>{
     }
     else{
       return(
-        <TouchableOpacity style={styles.button} onPress={() => _updateCharSpells(this.state.spell.id, "DELETE")}>
+        <TouchableOpacity style={styles.button} onPress={() => this._updateCharSpells(this.state.spell.id, "DELETE")}>
           <Image source={require('../resources/icons/clear.png')} style={{marginRight: 10}} />
           <Text>Remove from Character</Text>
         </TouchableOpacity>
@@ -116,18 +116,21 @@ export default class SpellSpecific extends Component<Props>{
     getData("ip").then((ip) => {
       getData("sessionId").then((sessionId) => {
         getData("charString").then((charString) => {
-          
           fetch(ip + 'charSpells/' + sessionId + "/" + charString, {
             method: method,
             headers: {
-              'Content-Type': 'appication/json'
+              'Content-Type': 'application/json'
             },
             body: JSON.stringify({
               "spellId": spellId
-            })
+            }),
           })
           .then((res) => res.json())
-          .then((resJ) => alert(resJ["message"]));
+          .then((resJ) => {
+            if(method === "POST") this.setState({ userHas: resJ["result"] });
+            if(method === "DELETE") this.setState({ userHas: !resJ["result"] });
+            // alert(resJ["message"]);
+          });
         });
       });
     });
@@ -152,6 +155,7 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20
+    marginTop: 20,
+    marginBottom: 20
   }
 });
