@@ -88,10 +88,6 @@ export default class Home extends Component<Props>{
           <Text style={styles.text}>Tracker</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('Notes')} style={styles.button}>
-          <Text style={styles.text}>Notes</Text>
-        </TouchableOpacity>
-
         <TouchableOpacity onPress={() => this._navSpellList()} style={styles.button}>
           <Text style={styles.text}>Spell List</Text>
         </TouchableOpacity>

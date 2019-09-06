@@ -49,6 +49,10 @@ export default class Character extends Component<Props>{
         <TouchableOpacity style={styles.button} onPress={() => this._navSpells()}>
           <Text>Spells</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate("Notes")}>
+          <Text>Notes</Text>
+        </TouchableOpacity>
       </View>
     )
   }

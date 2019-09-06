@@ -56,8 +56,7 @@ export default class SpellList extends Component<Props>{
     }
 
     return(
-      <ScrollView style={{flex: 1, padding: 10, backgroundColor: '#ededed'}}>
-
+      <ScrollView style={{flex: 1}}>
         {/* Search Field */}
         <View style={styles.searchField}>
           <Image source={require('../resources/icons/search.png')} style={[styles.searchImage, {marginRight: 10}]} />
@@ -78,7 +77,7 @@ export default class SpellList extends Component<Props>{
   _renderElement = (s) => {
     if(s.show){
       return (
-        <TouchableOpacity key={s.id} onPress={() => this._inspectSpell(s.id)} >
+        <TouchableOpacity key={s.id} style={{marginBottom: 10}} onPress={() => this._inspectSpell(s.id)} >
           <Card style={{flexDirection: 'row'}} title={s.name}>
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.text}>Level: { s.level }</Text>
@@ -138,21 +137,10 @@ export default class SpellList extends Component<Props>{
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    borderWidth: 1,
-    borderColor: '#a8b0bd',
-    marginTop: 20,
-    padding: 10,
-    // backgroundColor: '#f7f7f7'
-  },
   text: {
     fontSize: 18,
     flex: 1,
-    textAlign: 'center',
-    // borderWidth: 1,
-    // borderColor: '#a8b0bd'
+    textAlign: 'center'
   },
   searchField: {
     borderWidth: 1,
@@ -161,7 +149,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingLeft: 10,
-    paddingRight: 10
+    paddingRight: 10,
+    margin: 10
   },
   searchImage: {
     height: 20,

@@ -142,7 +142,7 @@ export default class Notes extends Component<Props>{
             })
           })
           .then((res) => res.json())
-          .then((resJ) => alert(resJ["message"]));
+          .then((resJ) => {});
         });
       });
     });
