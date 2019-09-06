@@ -262,7 +262,6 @@ export default class NewChar extends Component<Props>{
 }
 
 
-
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',

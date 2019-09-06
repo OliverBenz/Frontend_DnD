@@ -32,8 +32,10 @@ export default class SpellSpecific extends Component<Props>{
   }
 
   componentDidMount(){
-    this.setState({ spell: this.props.navigation.state.params.spell });
-    this._checkIfHas(this.props.navigation.state.params.spell.id);
+    // TODO: Get spell Id from router
+    // Get specific information about spell from backend
+
+    this._fetchSpells(this.props.navigation.state.params.spellId);
   }
 
   render(){
@@ -93,6 +95,24 @@ export default class SpellSpecific extends Component<Props>{
   }
 
   // Data fetching
+
+  _fetchSpells = (id) => {
+    getData("ip").then((ip) => {
+      fetch(ip + "spellSpec/" + id, {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => res.json())
+      .then((resJ) => {
+        if(resJ["result"]){
+          this.setState({ spell: resJ["spell"] });
+          this._checkIfHas(idid);
+        };
+      });
+    });
+  }
 
   _checkIfHas = (spellId) => {
     // Check if character has spell in list

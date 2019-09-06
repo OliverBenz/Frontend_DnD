@@ -46,7 +46,7 @@ export default class Character extends Component<Props>{
         <Health />
         <Money />
 
-        <TouchableOpacity style={styles.button} onPress={() => this._navSpells()}>
+        <TouchableOpacity style={[styles.button, { marginTop: 20 }]} onPress={() => this._navSpells()}>
           <Text>Spells</Text>
         </TouchableOpacity>
 
@@ -71,9 +71,9 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
-    backgroundColor: '#DDDDDD',
     padding: 15,
-    marginTop: 10,
-    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#A9A9A9',
+    margin: 10,
   },
 });

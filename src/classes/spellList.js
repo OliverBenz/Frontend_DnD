@@ -15,7 +15,6 @@ import { Card } from 'react-native-elements';
 
 type Props = {};
 
-
 export default class SpellList extends Component<Props>{
   static navigationOptions = ({navigation}) => {
     return{

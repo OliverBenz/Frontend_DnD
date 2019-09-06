@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Picker
 } from 'react-native';
+import { Button } from 'react-native-elements';
 import { storeData, getData, remData } from '../services/asyStorage';
 
 type Props = {};
@@ -36,7 +37,6 @@ export default class Home extends Component<Props>{
     // Check if login successful after navigation back to component
     this.props.navigation.addListener('willFocus', this._checkLogged);
   }
-
 
   _checkLogged = () => {
     getData("sessionId").then((sessionId) => {
@@ -79,17 +79,17 @@ export default class Home extends Component<Props>{
         { this._showHeader() }
 
         { this._showCharacter() }
-        
+
+        <TouchableOpacity onPress={() => this._navSpellList()} style={styles.button}>
+          <Text style={styles.text}>Spell List</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={() => this.props.navigation.navigate('Converter')} style={styles.button}>
           <Text style={styles.text}>Converter</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => this.props.navigation.navigate('Tracker')} style={styles.button}>
           <Text style={styles.text}>Tracker</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => this._navSpellList()} style={styles.button}>
-          <Text style={styles.text}>Spell List</Text>
         </TouchableOpacity>
       </View>
     );
@@ -207,10 +207,10 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
-    backgroundColor: '#DDDDDD',
     padding: 15,
-    marginTop: 10,
-    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#A9A9A9',
+    margin: 10,
   },
   text: {
     fontSize: 18
