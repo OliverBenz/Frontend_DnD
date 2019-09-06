@@ -26,7 +26,15 @@ export default class SpellSpecific extends Component<Props>{
   constructor(props){
     super(props);
     this.state = {
-      spell: {},
+      spell: {
+        "id": undefined,
+        "name": undefined,
+        "level": undefined,
+        "range": undefined,
+        "castTime": undefined,
+        "save": undefined,
+        "duration": undefined
+      },
       userHas: false
     }
   }
@@ -35,7 +43,8 @@ export default class SpellSpecific extends Component<Props>{
     // TODO: Get spell Id from router
     // Get specific information about spell from backend
 
-    this._fetchSpells(this.props.navigation.state.params.spellId);
+    this.setState({ spell: this.props.navigation.state.params.spell });
+    this._fetchSpell(this.props.navigation.state.params.spell.id);
   }
 
   render(){
@@ -96,7 +105,7 @@ export default class SpellSpecific extends Component<Props>{
 
   // Data fetching
 
-  _fetchSpells = (id) => {
+  _fetchSpell = (id) => {
     getData("ip").then((ip) => {
       fetch(ip + "spellSpec/" + id, {
         method: "GET",
@@ -107,8 +116,8 @@ export default class SpellSpecific extends Component<Props>{
       .then((res) => res.json())
       .then((resJ) => {
         if(resJ["result"]){
-          this.setState({ spell: resJ["spell"] });
-          this._checkIfHas(idid);
+          this.setState({ spell: resJ["spell"][0] });
+          this._checkIfHas(id);
         };
       });
     });
