@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   Image
 } from 'react-native';
-import { Card, ListItem, Button } from 'react-native-elements'
+import { Card, ListItem, Button } from 'react-native-elements';
 import { getData } from '../../services/asyStorage';
 
 type Props = {};
@@ -30,6 +30,16 @@ export default class Notes extends Component<Props>{
 
   componentDidMount(){
     this._fetchNotes();
+  }
+
+  componentWillUnmount(){
+    let notes = this.state.notes;
+
+    for(let i = 0; i < notes.length; i++){
+      if(notes[i].note === ""){
+        this._delNote(notes[i].id);
+      }
+    }
   }
 
   _checkId = (id) => {
@@ -121,7 +131,7 @@ export default class Notes extends Component<Props>{
     getData("ip").then((ip) => {
       getData("sessionId").then((sessionId) => {
         getData("charString").then((charString) => {
-          fetch("", {
+          fetch(ip + "charNotes/" + sessionId + "/" + charString, {
             method: "PATCH",
             headers: {
               'Content-Type': 'application/json'
@@ -171,20 +181,25 @@ export default class Notes extends Component<Props>{
     });
   }
 
-  // _delNote = (note) => {
-  //   fetch(this._getURL("charNotes"), {
-  //     method: "DELETE",
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({
-  //       id: note["id"],
-  //     }),
-  //   })
-  //   .then((res) => res.json())
-  //   .then((resJ) => alert(resJ["message"]));
-  // }
-
+  _delNote = (id) => {
+    getData("ip").then((ip) => {
+      getData("sessionId").then((sessionId) => {
+        getData("charString").then((charString) => {
+          fetch(ip + "charNotes/" + sessionId + "/" + charString, {
+            method: "DELETE",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              "id": id
+            })
+          })
+          .then((res) => res.json())
+          .then((resJ) => {});
+        });
+      });
+    });
+  }
 }
 
 const styles = StyleSheet.create({

@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   Image
 } from 'react-native';
+import { Card } from 'react-native-elements';
 
 type Props = {};
 
@@ -40,7 +41,7 @@ export default class SpellList extends Component<Props>{
   }
 
   _inspectSpell = (id) => {
-    let spell = this.state.spellList[this._findArrIndex(id)];
+    let spell = this.state.spellList[this.state.spellList.findIndex(x => x.id === id)];
     this.props.navigation.navigate('SpellSpecific', { spell: spell });
   };
 
@@ -55,7 +56,7 @@ export default class SpellList extends Component<Props>{
     }
 
     return(
-      <ScrollView style={{padding: 10, backgroundColor: '#ededed'}}>
+      <ScrollView style={{flex: 1, padding: 10, backgroundColor: '#ededed'}}>
 
         {/* Search Field */}
         <View style={styles.searchField}>
@@ -64,13 +65,6 @@ export default class SpellList extends Component<Props>{
           <TouchableOpacity onPress={() => this._clearFilter()}>
             <Image source={require('../resources/icons/clear.png')} style={styles.searchImage} />        
           </TouchableOpacity>
-        </View>
-
-        <View style={{flexDirection: 'row', marginTop: 20}}>
-          <Text style={{flex: 3, marginRight: 5, paddingLeft: 15, fontSize: 18, paddingLeft: 5}}>Name</Text>
-          <Text style={{flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center', fontSize: 18}}>Range</Text>
-          <Text style={{flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center', fontSize: 18}}>Casting Time</Text>
-          <Text style={{flex: 1, marginLeft: 5, textAlign: 'center', fontSize: 18}}>Save</Text>          
         </View>
 
         {
@@ -84,14 +78,13 @@ export default class SpellList extends Component<Props>{
   _renderElement = (s) => {
     if(s.show){
       return (
-        <TouchableOpacity key={s.id} style={styles.container} onPress={() => this._inspectSpell(s.id)}>
-          <View style={{flexDirection: 'row', marginBottom: 10}}>
-            <Text style={[styles.text, {flex: 3, marginRight: 5, paddingLeft: 5}]}>{s.name}</Text>
-            <Text style={[styles.text, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>{s.range}</Text>
-            <Text style={[styles.text, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>{s.castingTime}</Text>
-            <Text style={[styles.text, {flex: 1, marginLeft: 5, textAlign: 'center'}]}>{s.save}</Text>          
-          </View>
-          <Text style={[styles.text, {flex: 1, paddingLeft: 5}]}>{s.desc}</Text>
+        <TouchableOpacity key={s.id} onPress={() => this._inspectSpell(s.id)} >
+          <Card style={{flexDirection: 'row'}} title={s.name}>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={styles.text}>Level: { s.level }</Text>
+              <Text style={styles.text}>Range: { s.range }</Text>
+            </View>
+          </Card>
         </TouchableOpacity>
       )
     }
@@ -142,21 +135,6 @@ export default class SpellList extends Component<Props>{
       this.setState({ spellList: spellList, isLoading: false });
     });
   }
-
-
-
-  // Helper Functions
-
-  _findArrIndex = (id) => {
-    for(let i = 0; i < this.state.spellList.length; i++){
-      if(this.state.spellList[i].id == id){
-        return i;
-      }
-    }
-    return -1;
-  };
-
-
 }
 
 const styles = StyleSheet.create({
@@ -167,12 +145,14 @@ const styles = StyleSheet.create({
     borderColor: '#a8b0bd',
     marginTop: 20,
     padding: 10,
-    backgroundColor: '#f7f7f7'
+    // backgroundColor: '#f7f7f7'
   },
   text: {
     fontSize: 18,
-    borderWidth: 1,
-    borderColor: '#a8b0bd'
+    flex: 1,
+    textAlign: 'center',
+    // borderWidth: 1,
+    // borderColor: '#a8b0bd'
   },
   searchField: {
     borderWidth: 1,
