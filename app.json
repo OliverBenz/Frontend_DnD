@@ -1,4 +1,18 @@
 {
   "name": "DnD",
-  "displayName": "DnD"
+  "displayName": "DnD",
+
+  "expo": {
+    "name": "DnD Before",
+    "version": "1.0.0",
+    "description": "DnD Tracker",
+    "sdkVersion": "33.0.0",
+
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.oliverbenz.dndbefore"
+    }
+  }
 }

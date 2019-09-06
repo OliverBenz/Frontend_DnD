@@ -55,15 +55,13 @@ export default class SpellSpecific extends Component<Props>{
         {/* TODO: Remove name from fields, second row only components and duration */}
           <Text style={[styles.text, {flex: 1, marginRight: 5, textAlign: 'center'}]}>Range</Text>
           <Text style={[styles.text, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>Cast Time</Text>
-          <Text style={[styles.text, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>Save</Text>
           <Text style={[styles.text, {flex: 3, marginLeft: 5}]}>Duration</Text>
         </View>
 
         {/* Spell Data Row 1 */}
         <View style={{flexDirection: 'row', marginBottom: 20}}>
           <Text style={[styles.textBorder, {flex: 1, marginRight: 5, textAlign: 'center'}]}>{ this.state.spell.range }</Text>
-          <Text style={[styles.textBorder, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>{ this.state.spell.castingTime }</Text>
-          <Text style={[styles.textBorder, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>{ this.state.spell.save }</Text>
+          <Text style={[styles.textBorder, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>{ this.state.spell.castTime }</Text>
           <Text style={[styles.textBorder, {flex: 3, marginLeft: 5}]}>{ this.state.spell.duration }</Text>
         </View>
         
@@ -77,7 +75,7 @@ export default class SpellSpecific extends Component<Props>{
           <Text style={[styles.textBorder, {flex: 3}]}>{ this.state.spell.components }</Text>
         </View>
 
-        <Text style={styles.textBorder}>{ this.state.spell.descLong }</Text>
+        <Text style={styles.textBorder}>{ this.state.spell.desc }</Text>
 
         { this._renderButton() }
       </ScrollView>
@@ -116,6 +114,7 @@ export default class SpellSpecific extends Component<Props>{
       .then((res) => res.json())
       .then((resJ) => {
         if(resJ["result"]){
+          alert(JSON.stringify(resJ["spell"]));
           this.setState({ spell: resJ["spell"][0] });
           this._checkIfHas(id);
         };

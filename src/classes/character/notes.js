@@ -150,11 +150,7 @@ export default class Notes extends Component<Props>{
 
   _postNote = () => {
     let today = new Date();
-    // var dd = String(today.getDate()).padStart(2, '0');
-    // var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    // var yyyy = today.getFullYear();
-
-    today = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, '0') + "-" + String(today.getDate()).padStart(2, '0');
+    today = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, '0') + "-" + String(today.getDate()).padStart(2, '0') + " " + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     
     getData("ip").then((ip) => {
       getData("sessionId").then((sessionId) => {
@@ -172,9 +168,8 @@ export default class Notes extends Component<Props>{
           .then((res) => res.json())
           .then((resJ) => {
             var obj = this.state.notes;
-            obj.push(resJ);
+            obj.unshift(resJ);
             this.setState({ notes: obj });
-
           });
         });
       });
