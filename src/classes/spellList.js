@@ -93,41 +93,48 @@ export default class SpellList extends Component<Props>{
   }
 
   _renderButtons = () => {
-    if(this.state.currentPage === 1){
-      return(
-        <View style={{flexDirection: 'row'}}>
-          <View style={{flex: 2}}></View>
+    if(this.state.pages > 1){
+      if(this.state.currentPage === 1){
+        return(
+          <View style={{flexDirection: 'row'}}>
+            <View style={{flex: 2}}></View>
 
-          <TouchableOpacity style={styles.button} onPress={()=> this._nextPage()}>
-            <Text>Next</Text>
-          </TouchableOpacity>
-        </View>
-      )
-    }
-    else if(this.state.currentPage === this.state.pages){
-      return(
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={styles.button} onPress={()=> this._prevPage()}>
-            <Text>Back</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={()=> this._nextPage()}>
+              <Text>Next</Text>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+      else if(this.state.currentPage === this.state.pages){
+        return(
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity style={styles.button} onPress={()=> this._prevPage()}>
+              <Text>Back</Text>
+            </TouchableOpacity>
 
-          <View style={{flex: 2}}></View>        
-        </View>
-      )
+            <View style={{flex: 2}}></View>        
+          </View>
+        )
+      }
+      else{
+        return(
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity style={styles.button} onPress={()=> this._prevPage()}>
+              <Text>Back</Text>
+            </TouchableOpacity>
+
+            <View style={{flex: 1}}></View>
+
+            <TouchableOpacity style={styles.button} onPress={()=> this._nextPage()}>
+              <Text>Next</Text>
+            </TouchableOpacity>
+          </View>
+        )
+      }
     }
     else{
       return(
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={styles.button} onPress={()=> this._prevPage()}>
-            <Text>Back</Text>
-          </TouchableOpacity>
-
-          <View style={{flex: 1}}></View>
-
-          <TouchableOpacity style={styles.button} onPress={()=> this._nextPage()}>
-            <Text>Next</Text>
-          </TouchableOpacity>
-        </View>
+        <View></View>
       )
     }
   }
@@ -204,7 +211,7 @@ export default class SpellList extends Component<Props>{
         else spellList[i].show = false;
       }
 
-      let pages = Math.floor(spellList.length / this.state.spellsPerPage);
+      let pages = Math.ceil(spellList.length / this.state.spellsPerPage);
       this.setState({ pages: pages });
 
       this.setState({ spellList: spellList, isLoading: false });
