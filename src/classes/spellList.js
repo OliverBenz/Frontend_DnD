@@ -29,6 +29,11 @@ export default class SpellList extends Component<Props>{
       spellList: [],
       search: "",
 
+      spellsPerPage: 20,
+
+      pages: 1,
+      currentPage: 1,
+
       isLoading: false
     }
   }
@@ -65,12 +70,48 @@ export default class SpellList extends Component<Props>{
           </TouchableOpacity>
         </View>
 
-        {
-          this.state.spellList.map(s => ( this._renderElement(s) ))
-        }
+        { this.state.spellList.map(s => ( this._renderElement(s) )) }
+
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity style={styles.button} onPress={()=> this._prevPage()}>
+            <Text>Back</Text>
+          </TouchableOpacity>
+
+          <View style={{flex: 2}}></View>
+
+          <TouchableOpacity style={styles.button} onPress={()=> this._nextPage()}>
+            <Text>Next</Text>
+          </TouchableOpacity>
+        </View>
 
       </ScrollView>
     );
+  }
+
+  _nextPage = () => {
+    if(this.state.currentPage < this.state.pages){
+      let spells = this.state.spellList;
+
+      for(let i = 0; i < spells.length; i++){
+        if(i < this.state.currentPage * this.state.spellsPerPage) spells[i].show = false;
+        else if(i >= this.state.currentPage * this.state.spellsPerPage && i < (this.state.currentPage + 1) * this.state.spellsPerPage) spells[i].show = true;
+      }
+
+      this.setState({ currentPage: this.state.currentPage + 1, spellList: spells });
+    }
+  }
+
+  _prevPage = () => {
+    if(this.state.currentPage > 1){
+      let spells = this.state.spellList;
+
+      for(let i = 0; i < spells.length; i++){
+        if(i >= (this.state.currentPage - 1) * this.state.spellsPerPage && i <= this.state.currentPage * this.state.spellsPerPage) spells[i].show = false;
+        else if(i <= (this.state.currentPage - 1) * this.state.spellsPerPage && i >= (this.state.currentPage - 2) * this.state.spellsPerPage) spells[i].show = true;
+      }
+
+      this.setState({ currentPage: this.state.currentPage - 1, spellList: spells })
+    }
   }
 
   _renderElement = (s) => {
@@ -108,10 +149,13 @@ export default class SpellList extends Component<Props>{
   
   _clearFilter = () => {
     let spells = this.state.spellList;
+
     for(let i = 0; i < spells.length; i++){
-      spells[i].show = true;
+      if(i < this.state.spellsPerPage) spells[i].show = true;
+      else spells[i].show = false;
     }
-    this.setState({spellList: spells, search: ""});
+
+    this.setState({spellList: spells, search: "", currentPage: 1});
   }
 
   // Data fetching
@@ -128,8 +172,13 @@ export default class SpellList extends Component<Props>{
       var spellList = resJ;
 
       for(let i = 0; i < spellList.length; i++){
-        spellList[i].show = true;
+        if(i < this.state.spellsPerPage) spellList[i].show = true;
+        else spellList[i].show = false;
       }
+
+      let pages = Math.floor(spellList.length / this.state.spellsPerPage);
+      this.setState({ pages: pages });
+
       this.setState({ spellList: spellList, isLoading: false });
     });
   }
@@ -140,6 +189,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     flex: 1,
     textAlign: 'center'
+  },
+  button: {
+    alignItems: 'center',
+    padding: 15,
+    borderWidth: 1,
+    borderColor: '#A9A9A9',
+    margin: 10,
   },
   searchField: {
     borderWidth: 1,

@@ -81,7 +81,7 @@ export default class NewChar extends Component<Props>{
           <View style={{flex: 2}}></View>
           <TouchableOpacity style={styles.button} onPress={()=> this._switchPage(this.state.page + 1)}>
             <Text>Next</Text>
-          </TouchableOpacity>  
+          </TouchableOpacity>
         </View>
       )
     }

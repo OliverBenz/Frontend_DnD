@@ -114,7 +114,6 @@ export default class SpellSpecific extends Component<Props>{
       .then((res) => res.json())
       .then((resJ) => {
         if(resJ["result"]){
-          alert(JSON.stringify(resJ["spell"]));
           this.setState({ spell: resJ["spell"][0] });
           this._checkIfHas(id);
         };
