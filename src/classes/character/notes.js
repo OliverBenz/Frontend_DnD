@@ -21,6 +21,7 @@ export default class Notes extends Component<Props>{
 
     this.state = {
       notes : [],
+      search: "",
       // TODO: on click "new note" -> backend call for create note with all null values( if possible)
       // -> get all notes again
 
@@ -62,7 +63,7 @@ export default class Notes extends Component<Props>{
         {/* Search Field */}
         <View style={styles.searchField}>
           <Image source={require('../../resources/icons/search.png')} style={[styles.searchImage, {marginRight: 10}]} />
-          <TextInput style={{flex: 1, fontSize: 18}} placeholder="Search.." onChange={(e) => this._filterSpells(e.nativeEvent.text)} value={this.state.search} />
+          <TextInput style={{flex: 1, fontSize: 18}} placeholder="Search.." onChange={(e) => this._filterNotes(e.nativeEvent.text)} value={this.state.search} />
           <TouchableOpacity onPress={() => this._clearFilter()}>
             <Image source={require('../../resources/icons/clear.png')} style={styles.searchImage} />        
           </TouchableOpacity>
@@ -81,15 +82,45 @@ export default class Notes extends Component<Props>{
   }
 
   _renderNotes = (n) => {
-    return(
-      <Card key={n.id} title={n.date}>
-        <TextInput placeholder="..." value={this._getValue(n.id)} onChange={(e) => this._setValue(e.nativeEvent.text, n.id)} multiline={true} />
-        <TouchableOpacity onPress={() => this._updateNote(n.id)}>
-          <Text>Save</Text>
-        </TouchableOpacity>
-      </Card>
-    )
+    if(n.show){
+      return(
+        <Card key={n.id} title={n.date}>
+          <TextInput placeholder="..." value={this._getValue(n.id)} onChange={(e) => this._setValue(e.nativeEvent.text, n.id)} multiline={true} />
+          <TouchableOpacity onPress={() => this._updateNote(n.id)}>
+            <Text>Save</Text>
+          </TouchableOpacity>
+        </Card>
+      )
+    }
   }
+
+  // Filter Functions
+
+  _filterNotes = (filter) => {
+    this.setState({search: filter});
+
+    let notes = this.state.notes;
+    for(let i = 0; i < notes.length; i++){
+      if (! notes[i].note.toUpperCase().includes(filter.toUpperCase())){
+        notes[i].show = false;
+      }
+      else{
+        notes[i].show = true;
+      }
+    }
+    this.setState({notes: notes});
+  };
+  
+  _clearFilter = () => {
+    let notes = this.state.notes;
+
+    for(let i = 0; i < notes.length; i++){
+      notes[i].show = true;
+    }
+
+    this.setState({notes: notes, search: ""});
+  }
+
 
   _getValue = (id) => {
     return this.state.notes[this.state.notes.findIndex(x => x.id === id)].note;
@@ -117,6 +148,7 @@ export default class Notes extends Component<Props>{
             for(let i = 0; i < resJ.length; i++){
               let dateSplit = resJ[i].date.split("T")[0].split("-");
               resJ[i].date = dateSplit[2] + "." + dateSplit[1] + "." + dateSplit[0];
+              resJ[i].show = true;
             }
             this.setState({ notes: resJ })
           });
