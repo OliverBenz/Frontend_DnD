@@ -72,22 +72,67 @@ export default class SpellList extends Component<Props>{
 
         { this.state.spellList.map(s => ( this._renderElement(s) )) }
 
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={styles.button} onPress={()=> this._prevPage()}>
-            <Text>Back</Text>
-          </TouchableOpacity>
+        { this._renderButtons() }
+      </ScrollView>
+    );
+  }
 
+  _renderElement = (s) => {
+    if(s.show){
+      return (
+        <TouchableOpacity key={s.id} style={{marginBottom: 10}} onPress={() => this._inspectSpell(s.id)} >
+          <Card style={{flexDirection: 'row'}} title={s.name}>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={styles.text}>Level: { s.level }</Text>
+              <Text style={styles.text}>Range: { s.range }</Text>
+            </View>
+          </Card>
+        </TouchableOpacity>
+      )
+    }
+  }
+
+  _renderButtons = () => {
+    if(this.state.currentPage === 1){
+      return(
+        <View style={{flexDirection: 'row'}}>
           <View style={{flex: 2}}></View>
 
           <TouchableOpacity style={styles.button} onPress={()=> this._nextPage()}>
             <Text>Next</Text>
           </TouchableOpacity>
         </View>
+      )
+    }
+    else if(this.state.currentPage === this.state.pages){
+      return(
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity style={styles.button} onPress={()=> this._prevPage()}>
+            <Text>Back</Text>
+          </TouchableOpacity>
 
-      </ScrollView>
-    );
+          <View style={{flex: 2}}></View>        
+        </View>
+      )
+    }
+    else{
+      return(
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity style={styles.button} onPress={()=> this._prevPage()}>
+            <Text>Back</Text>
+          </TouchableOpacity>
+
+          <View style={{flex: 1}}></View>
+
+          <TouchableOpacity style={styles.button} onPress={()=> this._nextPage()}>
+            <Text>Next</Text>
+          </TouchableOpacity>
+        </View>
+      )
+    }
   }
 
+  // Page Functions
   _nextPage = () => {
     if(this.state.currentPage < this.state.pages){
       let spells = this.state.spellList;
@@ -114,23 +159,7 @@ export default class SpellList extends Component<Props>{
     }
   }
 
-  _renderElement = (s) => {
-    if(s.show){
-      return (
-        <TouchableOpacity key={s.id} style={{marginBottom: 10}} onPress={() => this._inspectSpell(s.id)} >
-          <Card style={{flexDirection: 'row'}} title={s.name}>
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.text}>Level: { s.level }</Text>
-              <Text style={styles.text}>Range: { s.range }</Text>
-            </View>
-          </Card>
-        </TouchableOpacity>
-      )
-    }
-  }
-
   // Filter Functions
-
   _filterSpells = (filter) => {
     this.setState({search: filter});
 
@@ -159,7 +188,6 @@ export default class SpellList extends Component<Props>{
   }
 
   // Data fetching
-
   _getSpellList = (url) => {
     fetch(url, {
       method: 'GET',
@@ -196,6 +224,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#A9A9A9',
     margin: 10,
+    flex: 1
   },
   searchField: {
     borderWidth: 1,

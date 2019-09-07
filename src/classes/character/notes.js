@@ -22,8 +22,6 @@ export default class Notes extends Component<Props>{
     this.state = {
       notes : [],
       search: "",
-      // TODO: on click "new note" -> backend call for create note with all null values( if possible)
-      // -> get all notes again
 
       isLoading: false
     }
@@ -41,15 +39,6 @@ export default class Notes extends Component<Props>{
         this._delNote(notes[i].id);
       }
     }
-  }
-
-  _checkId = (id) => {
-    for(let i = 0; i < this.state.notes.length; i++){
-      if(this.state.notes[i].id === id){
-        return false;
-      }
-    }
-    return true;
   }
 
   render(){
@@ -94,8 +83,17 @@ export default class Notes extends Component<Props>{
     }
   }
 
-  // Filter Functions
+  // Note Values
+  _getValue = (id) => {
+    return this.state.notes[this.state.notes.findIndex(x => x.id === id)].note;
+  }
+  _setValue = (value, id) => {
+    let notes = this.state.notes;
+    notes[this.state.notes.findIndex(x => x.id === id)].note = value;
+    this.setState({notes});
+  }
 
+  // Filter Functions
   _filterNotes = (filter) => {
     this.setState({search: filter});
 
@@ -121,18 +119,7 @@ export default class Notes extends Component<Props>{
     this.setState({notes: notes, search: ""});
   }
 
-
-  _getValue = (id) => {
-    return this.state.notes[this.state.notes.findIndex(x => x.id === id)].note;
-  }
-  _setValue = (value, id) => {
-    let notes = this.state.notes;
-    notes[this.state.notes.findIndex(x => x.id === id)].note = value;
-    this.setState({notes});
-  }
-
   // Data fetching
-
   _fetchNotes = () => {
     getData("ip").then((ip) => {
       getData("sessionId").then((sessionId) => {
