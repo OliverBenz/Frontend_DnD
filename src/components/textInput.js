@@ -50,7 +50,7 @@ class CustomInput extends Component{
 const styles = StyleSheet.create({
   textInput: {
     height: 40,
-    paddingLeft: 6,
+    paddingLeft: 10,
     fontSize: 18
   }
 });

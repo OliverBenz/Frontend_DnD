@@ -11,6 +11,7 @@ import {
   Image
 } from 'react-native';
 import { Card, ListItem, Button } from 'react-native-elements';
+import AddNew from '../../components/addnew';
 import { getData } from '../../services/asyStorage';
 
 type Props = {};
@@ -59,10 +60,7 @@ export default class Notes extends Component<Props>{
         </View>
 
         <ScrollView>
-          <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', margin: 10}} onPress={() => this._postNote()}>
-            <Image source={require('../../resources/icons/add.png')} style={{marginRight: 10}} />
-            <Text style={styles.text}>New Note</Text>
-          </TouchableOpacity>
+          <AddNew title={"New Note"} callback={() => this._postNote()} />
 
           { this.state.notes.map(n => this._renderNotes(n)) }        
         </ScrollView>
@@ -186,6 +184,7 @@ export default class Notes extends Component<Props>{
           })
           .then((res) => res.json())
           .then((resJ) => {
+            resJ.show = true;
             var obj = this.state.notes;
             obj.unshift(resJ);
             this.setState({ notes: obj });

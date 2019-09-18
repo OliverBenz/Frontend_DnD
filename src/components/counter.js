@@ -9,22 +9,44 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-class Counter extends Component{
-  state = {
-    value: 0,
+
+// Counter Component
+// Min and Max Values are not required
+export default class Counter extends Component{
+
+  _callbackAdd = () => {
+    if(this.props.max !== undefined){
+      if(this.props.value < this.props.max) this.props.callback(this.props.value + 1);
+    }
+    else{
+      this.props.callback(this.props.value + 1);
+    }
+
+  }
+  _callbackSub = () => {
+    if(this.props.min !== undefined){
+      if(this.props.value > this.props.min) this.props.callback(this.props.value - 1);
+    }
+    else{
+      this.props.callback(this.props.value - 1)
+    }
+
+    // if(this.props.min != undefined) if(this.props.value > this.props.min) this.props.callback(this.props.value - 1);
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <TextInput style={{fontSize: 20, paddingLeft: 10, paddingRight: 10}} placeholder="0" value={String(this.state.value)} />
+        <Text style={{fontSize: 18, paddingLeft: 15, paddingRight: 15}}>
+          {this.props.value}
+        </Text>
 
         <View style={{flexDirection: 'column'}}>
-          <TouchableOpacity onPress={() => this.setState({ value: this.state.value + 1 }) } style={styles.button}>
+          <TouchableOpacity onPress={() => this._callbackAdd() } style={styles.button}>
             <Text style={styles.text}>+</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity onPress={ () => this.setState({ value: this.state.value - 1 }) } style={styles.button}>
+          <TouchableOpacity onPress={ () => this._callbackSub() } style={styles.button}>
             <Text style={styles.text}>-</Text>
           </TouchableOpacity>
         </View>
@@ -55,5 +77,3 @@ const styles = StyleSheet.create({
     height: 40,
   },
 });
-
-export default Counter;

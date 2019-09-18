@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { storeData, getData } from '../../services/asyStorage';
 import CustomInput from '../../components/textInput';
+import AddNew from '../../components/addnew';
 
 type Props = {};
 
@@ -62,10 +63,7 @@ export default class Account extends Component<Props>{
 
           { this.state.charList.map(c => ( this._renderChars(c) )) }
 
-          <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', margin: 10}} onPress={() => this.props.navigation.navigate("NewChar")}>
-            <Image source={require('../../resources/icons/add.png')} style={{marginRight: 10}} />
-            <Text style={styles.text}>Add new character</Text>
-          </TouchableOpacity>
+          <AddNew title={"Add new Character"} callback={() => this.props.navigation.navigate("NewChar")} />
         </View>
       </ScrollView>
     );
