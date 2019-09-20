@@ -69,7 +69,7 @@ export default class Home extends Component<Props>{
   _navSpellList = () => {
     getData("ip").then((ip) => {
       // CharSpells for +/- Button in spellList
-      this.props.navigation.navigate('SpellList', { title: "Spell List", url: ip + "getSpells", charSpells: false});
+      this.props.navigation.navigate('SpellList', { title: "Spell List", url: ip + "spells", charSpells: false});
     });
   }
 
@@ -176,13 +176,13 @@ export default class Home extends Component<Props>{
       })
       .then((res) => res.json())
       .then((resJ) => {
-        if(resJ.length !== 0){
-          this.setState({ charList: resJ });
+        if(resJ.data.length !== 0){
+          this.setState({ charList: resJ.data });
 
           getData("charString").then((charString) => {
             if(charString === undefined){
-              storeData("charString", resJ[0].charString);
-              this.setState({ charString: resJ[0].charString });
+              storeData("charString", resJ.data[0].charString);
+              this.setState({ charString: resJ.data[0].charString });
             }
             else{
               this.setState({ charString: charString });

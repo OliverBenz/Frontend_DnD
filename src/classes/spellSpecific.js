@@ -113,8 +113,8 @@ export default class SpellSpecific extends Component<Props>{
       })
       .then((res) => res.json())
       .then((resJ) => {
-        if(resJ["result"]){
-          this.setState({ spell: resJ["spell"][0] });
+        if(resJ["success"]){
+          this.setState({ spell: resJ.data[0] });
           this._checkIfHas(id);
         };
       });
@@ -133,7 +133,7 @@ export default class SpellSpecific extends Component<Props>{
             },
           })
           .then((res) => res.json())
-          .then((resJ) => this.setState({ userHas: resJ["result"] }));
+          .then((resJ) => this.setState({ userHas: resJ.data }));
         });
       });
     });
@@ -154,10 +154,11 @@ export default class SpellSpecific extends Component<Props>{
           })
           .then((res) => res.json())
           .then((resJ) => {
-            if(method === "POST") this.setState({ userHas: resJ["result"] });
-            if(method === "DELETE") this.setState({ userHas: !resJ["result"] });
-            // alert(resJ["message"]);
-          });
+            if(resJ.success){
+              if(method === "POST") this.setState({ userHas: resJ.data });
+              if(method === "DELETE") this.setState({ userHas: resJ.data });
+            }
+            });
         });
       });
     });

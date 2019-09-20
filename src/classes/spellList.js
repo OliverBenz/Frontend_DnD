@@ -204,7 +204,7 @@ export default class SpellList extends Component<Props>{
     })
     .then((res) => res.json())
     .then((resJ) => {
-      var spellList = resJ;
+      var spellList = resJ.data;
 
       for(let i = 0; i < spellList.length; i++){
         if(i < this.state.spellsPerPage) spellList[i].show = true;

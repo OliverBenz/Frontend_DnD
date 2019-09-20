@@ -87,7 +87,7 @@ export default class Money extends Component<Props>{
       })
       .then((res) => res.json())
       .then((resJ) => {
-        this.setState({copper: resJ.copper, silver: resJ.silver, electrum: resJ.electrum, gold: resJ.gold, platinum: resJ.platinum, isLoading: false});
+        this.setState({copper: resJ.data.copper, silver: resJ.data.silver, electrum: resJ.data.electrum, gold: resJ.data.gold, platinum: resJ.data.platinum, isLoading: false});
       })
       .catch((error) => {
         alert(error);
@@ -96,21 +96,32 @@ export default class Money extends Component<Props>{
   }
 
   _postAPI = (sessionId, charString) => {
-    getData("ip").then((ip) => {
-      fetch(ip + 'charMoney/' + sessionId + '/' + charString, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          copper: this.state.copper,
-          silver: this.state.silver,
-          electrum: this.state.electrum,
-          gold: this.state.gold,
-          platinum: this.state.platinum
-        }),
+    if(!(this.state.copper === undefined && this.state.silver === undefined && this.state.electrum === undefined && this.state.gold === undefined && this.state.platinum === undefined)){
+      this._checkData();
+      getData("ip").then((ip) => {
+        fetch(ip + 'charMoney/' + sessionId + '/' + charString, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            copper: this.state.copper,
+            silver: this.state.silver,
+            electrum: this.state.electrum,
+            gold: this.state.gold,
+            platinum: this.state.platinum
+          }),
+        });
       });
-    });
+    }
+  }
+
+  _checkData = () => {
+    if(this.state.copper === undefined) this.setState({ copper: 0 });
+    if(this.state.silver === undefined) this.setState({ silver: 0 });
+    if(this.state.electrum === undefined) this.setState({ electrum: 0 });
+    if(this.state.gold === undefined) this.setState({ gold: 0 });
+    if(this.state.platinum === undefined) this.setState({ platinum: 0 });
   }
 }
 

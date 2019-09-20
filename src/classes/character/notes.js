@@ -130,12 +130,12 @@ export default class Notes extends Component<Props>{
           })
           .then((res) => res.json())
           .then((resJ) => {
-            for(let i = 0; i < resJ.length; i++){
-              let dateSplit = resJ[i].date.split("T")[0].split("-");
-              resJ[i].date = dateSplit[2] + "." + dateSplit[1] + "." + dateSplit[0];
-              resJ[i].show = true;
+            for(let i = 0; i < resJ.data.length; i++){
+              let dateSplit = resJ.data[i].date.split("T")[0].split("-");
+              resJ.data[i].date = dateSplit[2] + "." + dateSplit[1] + "." + dateSplit[0];
+              resJ.data[i].show = true;
             }
-            this.setState({ notes: resJ })
+            this.setState({ notes: resJ.data });
           });
         });
       });
@@ -184,9 +184,9 @@ export default class Notes extends Component<Props>{
           })
           .then((res) => res.json())
           .then((resJ) => {
-            resJ.show = true;
+            resJ.data.show = true;
             var obj = this.state.notes;
-            obj.unshift(resJ);
+            obj.unshift(resJ.data);
             this.setState({ notes: obj });
           });
         });

@@ -177,7 +177,7 @@ export default class NewChar extends Component<Props>{
         }
       })
       .then((res) => res.json())
-      .then((resJ) => this.setState({ alignments: resJ, alignment: resJ[0]["id"] }));
+      .then((resJ) => this.setState({ alignments: resJ.data, alignment: resJ.data[0]["id"] }));
     });
   }
   
@@ -190,7 +190,7 @@ export default class NewChar extends Component<Props>{
         }
       })
       .then((res) => res.json())
-      .then((resJ) => this.setState({ backgrounds: resJ, background: resJ[0]["id"] }));
+      .then((resJ) => this.setState({ backgrounds: resJ.data, background: resJ.data[0]["id"] }));
     });
   }
 
@@ -228,7 +228,7 @@ export default class NewChar extends Component<Props>{
           })
           .then((res) => res.json())
           .then((resJ) => {
-            storeData("charString", resJ["charString"]);
+            storeData("charString", resJ.data.charString);
             this.props.navigation.navigate("Home");
           });
         });

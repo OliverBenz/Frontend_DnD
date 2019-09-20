@@ -61,7 +61,7 @@ export default class Login extends Component<Props>{
         })
         .then((res) => res.json())
         .then((resJ) => {
-          storeData("sessionId", resJ["sessionId"]);
+          storeData("sessionId", resJ.data.sessionId);
           
           this.props.navigation.navigate('Home');
         });

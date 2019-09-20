@@ -149,19 +149,15 @@ export default class Account extends Component<Props>{
         })
         .then((res) => res.json())
         .then((resJ) => {
-          if(resJ["result"]){
+          if(resJ.success){
             // Remove character from charList
             let charList = this.state.charList;
-            for(let i = 0; i < charList.length; i++){
-              if(charList[i]["charString"] == charString){
-                charList.splice(i, 1);
-                this.setState({ charList: charList, password: "" });
-                break;
-              }
-            }
+            
+            charList.splice(charList.findIndex(c => c.charString === charString), 1)
+            this.setState({ charList: charList, password: "" });
           }
           else{
-            alert(resJ["message"]);
+            alert(resJ.message);
           }
         });
       });

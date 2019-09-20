@@ -78,7 +78,7 @@ export default class Health extends Component<Props>{
       })
       .then((res) => res.json())
       .then((resJ) => {
-        this.setState({maxHealth: resJ.maxHealth, currentHealth: resJ.currentHealth, tempHealth: resJ.tempHealth, isLoading: false});
+        this.setState({maxHealth: resJ.data.maxHealth, currentHealth: resJ.data.currentHealth, tempHealth: resJ.data.tempHealth, isLoading: false});
       })
       .catch((error) => {
         alert(error)
@@ -87,19 +87,29 @@ export default class Health extends Component<Props>{
   }
 
   _postAPI = (sessionId, charString) => {
-    getData("ip").then((ip) => {
-      fetch(ip + 'charHealth/' + sessionId + '/' + charString, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          maxHealth: this.state.maxHealth,
-          currentHealth: this.state.currentHealth,
-          tempHealth: this.state.tempHealth
-        }),
+    if(!(this.state.maxHealth === undefined && this.state.currentHealth === undefined && this.state.tempHealth === undefined)){
+      this._checkData();
+      
+      getData("ip").then((ip) => {
+        fetch(ip + 'charHealth/' + sessionId + '/' + charString, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            maxHealth: this.state.maxHealth,
+            currentHealth: this.state.currentHealth,
+            tempHealth: this.state.tempHealth
+          }),
+        });
       });
-    });
+    }
+  }
+
+  _checkData = () => {
+    if(this.state.maxHealth === undefined) this.setState({ maxHealth: 0 });
+    if(this.state.currentHealth === undefined) this.setState({ currentHealth: 0 });
+    if(this.state.tempHealth === undefined) this.setState({ tempHealth: 0 });
   }
 }
 
