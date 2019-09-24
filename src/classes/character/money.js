@@ -79,7 +79,7 @@ export default class Money extends Component<Props>{
 
   _getAPI = (sessionId, charString) => {
     getData("ip").then((ip) => {
-      fetch(ip + 'charMoney/' + sessionId + '/' + charString, {
+      fetch(ip + 'character/money/' + sessionId + '/' + charString, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ export default class Money extends Component<Props>{
     if(!(this.state.copper === undefined && this.state.silver === undefined && this.state.electrum === undefined && this.state.gold === undefined && this.state.platinum === undefined)){
       this._checkData();
       getData("ip").then((ip) => {
-        fetch(ip + 'charMoney/' + sessionId + '/' + charString, {
+        fetch(ip + 'character/money/' + sessionId + '/' + charString, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json'

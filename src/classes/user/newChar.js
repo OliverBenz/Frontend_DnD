@@ -170,7 +170,7 @@ export default class NewChar extends Component<Props>{
   // Data fetching
   _getAlignments = () => {
     getData("ip").then((ip) => {
-      fetch(ip + "alignments", {
+      fetch(ip + "general/alignments", {
         method: "GET",
         headers: {
           'Content-Type': 'application/json'
@@ -183,7 +183,7 @@ export default class NewChar extends Component<Props>{
   
   _getBackgrounds = () => {
     getData("ip").then((ip) => {
-      fetch(ip + "backgrounds", {
+      fetch(ip + "general/backgrounds", {
         method: "GET",
         headers: {
           'Content-Type': 'application/json',
@@ -198,7 +198,7 @@ export default class NewChar extends Component<Props>{
     if(this._checkValues()){
       getData("ip").then((ip) => {
         getData("sessionId").then((sessionId) => {
-          fetch(ip + "userChar/" + sessionId, {
+          fetch(ip + "user/character/" + sessionId, {
             method: "POST",
             headers: {
               'Content-Type': 'application/json'

@@ -49,7 +49,7 @@ export default class Login extends Component<Props>{
   _postBackend = () => {
     if(this.state.email != "" && this.state.password != ""){
       getData("ip").then((ip) => {
-        fetch(ip + 'userLogin', {
+        fetch(ip + 'user/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

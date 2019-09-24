@@ -70,7 +70,7 @@ export default class Health extends Component<Props>{
 
   _getAPI = (sessionId, charString) => {
     getData("ip").then((ip) => {
-      fetch(ip + 'charHealth/' + sessionId + '/' + charString, {
+      fetch(ip + 'character/health/' + sessionId + '/' + charString, {
         mehod: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ export default class Health extends Component<Props>{
       this._checkData();
       
       getData("ip").then((ip) => {
-        fetch(ip + 'charHealth/' + sessionId + '/' + charString, {
+        fetch(ip + 'character/health/' + sessionId + '/' + charString, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json'

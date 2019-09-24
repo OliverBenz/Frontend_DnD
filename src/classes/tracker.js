@@ -22,22 +22,22 @@ export default class Tracker extends Component<Props>{
   constructor(props){
     super(props);
     this.state = {
+      isLoading: false,
+
       showNew: false,
       newTitle: "",
       newMax: "",
       newMin: "",
       newVal: "",
 
-      trackers : [
-        {
-          "id": 0,
-          "title": "Lucky",
-          "minValue": 0,
-          "maxValue": 3,
-          "value": 0
-        },
-      ],
+      trackers : [],
     };
+  }
+
+  componentDidMount(){
+    this.setState({ isLoading: true });
+
+    this._getTrackers();
   }
 
   render(){
@@ -97,15 +97,15 @@ export default class Tracker extends Component<Props>{
     getData("ip").then((ip) => {
       getData("sessionId").then((sessionId) => {
         getData("charString").then((charString) => {
-          fetch(ip + "trackers/" + sessionId + "/" + charString, {
+          fetch(ip + "character/trackers/" + sessionId + "/" + charString, {
             method: "GET",
             headers: {
               'Content-Type': 'application/json',
             },
           })
-          .then((res) => res.json)
+          .then((res) => res.json())
           .then((resJ) => {
-            alert(resJ);
+            this.setState({ trackers: resJ.data, isLoading: false });
           })
        });
       });
@@ -116,7 +116,7 @@ export default class Tracker extends Component<Props>{
     getData("ip").then((ip) => {
       getData("sessionId").then((sessionId) => {
         getData("charString").then((charString) => {
-          fetch(ip + "trackers/" + sessionId + "/" + charString, {
+          fetch(ip + "character/trackers/" + sessionId + "/" + charString, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -128,10 +128,10 @@ export default class Tracker extends Component<Props>{
               "value": this.state.newVal
             }),
           })
-          .then((res) => res.json)
+          .then((res) => res.json())
           .then((resJ) => {
-            alert(resJ)
             this.setState({ newTitle: "", newMin: undefined, newMax: undefined, newVal: undefined, showNew: false });
+            this._getTrackers();
           });
         });
       });

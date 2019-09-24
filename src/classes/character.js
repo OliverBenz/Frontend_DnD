@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
+  ScrollView,
   Text,
   Picker,
   TouchableOpacity
@@ -33,7 +34,7 @@ export default class Character extends Component<Props>{
       getData("charString").then((charString) => {
         getData("ip").then((ip) => {
           // CharSpells for +/- Button in spellList
-          this.props.navigation.navigate('SpellList', { title: "Spell List", url: ip + "charSpells/" + sessionId + "/" + charString, charSpells: true });
+          this.props.navigation.navigate('SpellList', { title: "Spell List", url: ip + "character/spells/" + sessionId + "/" + charString, charSpells: true });
         });
       });
     });
@@ -41,7 +42,7 @@ export default class Character extends Component<Props>{
 
   render(){
     return(
-      <View>
+      <ScrollView>
         <General />
         <Health />
         <Money />
@@ -53,7 +54,7 @@ export default class Character extends Component<Props>{
         <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate("Notes")}>
           <Text>Notes</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     )
   }
 }

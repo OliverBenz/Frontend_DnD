@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
+  ScrollView,
   View,
   TouchableOpacity,
   Picker
@@ -69,13 +70,13 @@ export default class Home extends Component<Props>{
   _navSpellList = () => {
     getData("ip").then((ip) => {
       // CharSpells for +/- Button in spellList
-      this.props.navigation.navigate('SpellList', { title: "Spell List", url: ip + "spells", charSpells: false});
+      this.props.navigation.navigate('SpellList', { title: "Spell List", url: ip + "general/spells", charSpells: false});
     });
   }
 
   render(){
     return(
-      <View style={{marginTop: 10}}>
+      <ScrollView style={{marginTop: 10}}>
         { this._showHeader() }
 
         { this._showCharacter() }
@@ -91,7 +92,7 @@ export default class Home extends Component<Props>{
         <TouchableOpacity onPress={() => this.props.navigation.navigate('Tracker')} style={styles.button}>
           <Text style={styles.text}>Tracker</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     );
   }
 
@@ -168,7 +169,7 @@ export default class Home extends Component<Props>{
 
   _getCharList = (sessionId) =>{
     getData("ip").then((ip) => {
-      fetch(ip + 'charList/' + sessionId, {
+      fetch(ip + 'user/charList/' + sessionId, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

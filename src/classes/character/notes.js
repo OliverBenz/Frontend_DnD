@@ -122,7 +122,7 @@ export default class Notes extends Component<Props>{
     getData("ip").then((ip) => {
       getData("sessionId").then((sessionId) => {
         getData("charString").then((charString) => {
-          fetch(ip + "charNotes/" + sessionId + "/" + charString, {
+          fetch(ip + "character/notes/" + sessionId + "/" + charString, {
             method: "GET",
             headers: {
               'Content-Type': 'application/json',
@@ -148,7 +148,7 @@ export default class Notes extends Component<Props>{
     getData("ip").then((ip) => {
       getData("sessionId").then((sessionId) => {
         getData("charString").then((charString) => {
-          fetch(ip + "charNotes/" + sessionId + "/" + charString, {
+          fetch(ip + "character/notes/" + sessionId + "/" + charString, {
             method: "PATCH",
             headers: {
               'Content-Type': 'application/json'
@@ -172,7 +172,7 @@ export default class Notes extends Component<Props>{
     getData("ip").then((ip) => {
       getData("sessionId").then((sessionId) => {
         getData("charString").then((charString) => {
-          fetch(ip + "charNotes/" + sessionId + "/" + charString, {
+          fetch(ip + "character/notes/" + sessionId + "/" + charString, {
             method: "POST",
             headers: {
               'Content-Type': 'application/json'
@@ -198,7 +198,7 @@ export default class Notes extends Component<Props>{
     getData("ip").then((ip) => {
       getData("sessionId").then((sessionId) => {
         getData("charString").then((charString) => {
-          fetch(ip + "charNotes/" + sessionId + "/" + charString, {
+          fetch(ip + "character/notes/" + sessionId + "/" + charString, {
             method: "DELETE",
             headers: {
               'Content-Type': 'application/json',

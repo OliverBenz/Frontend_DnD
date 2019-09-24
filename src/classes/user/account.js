@@ -137,7 +137,7 @@ export default class Account extends Component<Props>{
   _delCharAPI = (charString, password) => {
     getData("ip").then((ip) => {
       getData("sessionId").then((sessionId) => {
-        fetch(ip + "userChar/" + sessionId, {
+        fetch(ip + "user/character/" + sessionId, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json'

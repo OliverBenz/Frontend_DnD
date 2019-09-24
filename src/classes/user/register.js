@@ -65,7 +65,7 @@ export default class Login extends Component<Props>{
   _registerAPI = () => {
     if(this.state.firstname !== "" && this.state.lastname !== "" && this.state.password !== "" && this.state.email !== "" && this.state.password == this.state.passwordCheck){
       getData("ip").then((ip) => {
-        fetch(ip + "userRegister", {
+        fetch(ip + "user/register", {
           method: "POST",
           headers: {
             'Content-Type': 'application/json'

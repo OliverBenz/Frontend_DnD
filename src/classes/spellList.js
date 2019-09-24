@@ -30,9 +30,7 @@ export default class SpellList extends Component<Props>{
       search: "",
 
       spellsPerPage: 20,
-
-      pages: 1,
-      currentPage: 1,
+      page: 0,
 
       isLoading: false
     }
@@ -40,8 +38,7 @@ export default class SpellList extends Component<Props>{
 
   componentDidMount(){
     this.setState({isLoading: true});
-
-    this._getSpellList(this.props.navigation.state.params.url);
+    this._getSpellList(this.props.navigation.state.params.url + "/" + parseInt(this.state.page * this.state.spellsPerPage) + "/" + parseInt(this.state.spellsPerPage));
   }
 
   _inspectSpell = (id) => {
@@ -78,92 +75,56 @@ export default class SpellList extends Component<Props>{
   }
 
   _renderElement = (s) => {
-    if(s.show){
-      return (
-        <TouchableOpacity key={s.id} style={{marginBottom: 10}} onPress={() => this._inspectSpell(s.id)} >
-          <Card style={{flexDirection: 'row'}} title={s.name}>
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.text}>Level: { s.level }</Text>
-              <Text style={styles.text}>Range: { s.range }</Text>
-            </View>
-          </Card>
-        </TouchableOpacity>
-      )
-    }
+    return (
+      <TouchableOpacity key={s.id} style={{marginBottom: 10}} onPress={() => this._inspectSpell(s.id)} >
+        <Card style={{flexDirection: 'row'}} title={s.name}>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.text}>Level: { s.level }</Text>
+            <Text style={styles.text}>Range: { s.range }</Text>
+          </View>
+        </Card>
+      </TouchableOpacity>
+    )
   }
 
   _renderButtons = () => {
-    if(this.state.pages > 1){
-      if(this.state.currentPage === 1){
-        return(
-          <View style={{flexDirection: 'row'}}>
-            <View style={{flex: 2}}></View>
+    if(this.state.page === 0){
+      return(
+        <View style={{flexDirection: 'row'}}>
+          <View style={{flex: 2}}></View>
 
-            <TouchableOpacity style={styles.button} onPress={()=> this._nextPage()}>
-              <Text>Next</Text>
-            </TouchableOpacity>
-          </View>
-        )
-      }
-      else if(this.state.currentPage === this.state.pages){
-        return(
-          <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity style={styles.button} onPress={()=> this._prevPage()}>
-              <Text>Back</Text>
-            </TouchableOpacity>
-
-            <View style={{flex: 2}}></View>        
-          </View>
-        )
-      }
-      else{
-        return(
-          <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity style={styles.button} onPress={()=> this._prevPage()}>
-              <Text>Back</Text>
-            </TouchableOpacity>
-
-            <View style={{flex: 1}}></View>
-
-            <TouchableOpacity style={styles.button} onPress={()=> this._nextPage()}>
-              <Text>Next</Text>
-            </TouchableOpacity>
-          </View>
-        )
-      }
+          <TouchableOpacity style={styles.button} onPress={()=> this._nextPage()}>
+            <Text>Next</Text>
+          </TouchableOpacity>
+        </View>
+      )
     }
     else{
       return(
-        <View></View>
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity style={styles.button} onPress={()=> this._prevPage()}>
+            <Text>Back</Text>
+          </TouchableOpacity>
+
+          <View style={{flex: 1}}></View>
+
+          <TouchableOpacity style={styles.button} onPress={()=> this._nextPage()}>
+            <Text>Next</Text>
+          </TouchableOpacity>
+        </View>
       )
-    }
-  }
-
-  // Page Functions
-  _nextPage = () => {
-    if(this.state.currentPage < this.state.pages){
-      let spells = this.state.spellList;
-
-      for(let i = 0; i < spells.length; i++){
-        if(i < this.state.currentPage * this.state.spellsPerPage) spells[i].show = false;
-        else if(i >= this.state.currentPage * this.state.spellsPerPage && i < (this.state.currentPage + 1) * this.state.spellsPerPage) spells[i].show = true;
-      }
-
-      this.setState({ currentPage: this.state.currentPage + 1, spellList: spells });
     }
   }
 
   _prevPage = () => {
-    if(this.state.currentPage > 1){
-      let spells = this.state.spellList;
-
-      for(let i = 0; i < spells.length; i++){
-        if(i >= (this.state.currentPage - 1) * this.state.spellsPerPage && i <= this.state.currentPage * this.state.spellsPerPage) spells[i].show = false;
-        else if(i <= (this.state.currentPage - 1) * this.state.spellsPerPage && i >= (this.state.currentPage - 2) * this.state.spellsPerPage) spells[i].show = true;
-      }
-
-      this.setState({ currentPage: this.state.currentPage - 1, spellList: spells })
+    if(this.state.page > 0){
+      this._getSpellList(this.props.navigation.state.params.url + "/" + parseInt((this.state.page - 1) * this.state.spellsPerPage) + "/" + parseInt(this.state.spellsPerPage));
+      this.setState({ page: this.state.page - 1 });
     }
+  }
+  _nextPage = () => {
+    this._getSpellList(this.props.navigation.state.params.url + "/" + parseInt((this.state.page + 1) * this.state.spellsPerPage) + "/" + parseInt(this.state.spellsPerPage));
+    this.setState({ page: this.state.page + 1 });
   }
 
   // Filter Functions
@@ -202,17 +163,12 @@ export default class SpellList extends Component<Props>{
         'Content-Type': 'application/json',
       }
     })
-    .then((res) => res.json())
+    .then((res) => {
+      alert(JSON.stringify(res));
+      return res.json()})
     .then((resJ) => {
       var spellList = resJ.data;
-
-      for(let i = 0; i < spellList.length; i++){
-        if(i < this.state.spellsPerPage) spellList[i].show = true;
-        else spellList[i].show = false;
-      }
-
-      let pages = Math.ceil(spellList.length / this.state.spellsPerPage);
-      this.setState({ pages: pages });
+      alert(JSON.stringify(resJ));
 
       this.setState({ spellList: spellList, isLoading: false });
     });
