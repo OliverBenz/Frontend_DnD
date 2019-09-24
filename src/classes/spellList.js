@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import { Card } from 'react-native-elements';
 
+import Search from '../components/search';
+
 type Props = {};
 
 export default class SpellList extends Component<Props>{
@@ -58,14 +60,7 @@ export default class SpellList extends Component<Props>{
 
     return(
       <ScrollView style={{flex: 1}}>
-        {/* Search Field */}
-        <View style={styles.searchField}>
-          <Image source={require('../resources/icons/search.png')} style={[styles.searchImage, {marginRight: 10}]} />
-          <TextInput style={{flex: 1, fontSize: 18}} placeholder="Search.." onChange={(e) => this._filterSpells(e.nativeEvent.text)} value={this.state.search} />
-          <TouchableOpacity onPress={() => this._clearFilter()}>
-            <Image source={require('../resources/icons/clear.png')} style={styles.searchImage} />        
-          </TouchableOpacity>
-        </View>
+        <Search value={this.state.search} placeholder="Search..." onChange={(e) => this.setState({search: e})} onClear={() => this._clearFilter()} onConfirm={() => this._getSpellList(this.props.navigation.state.params.url + "/" + parseInt(this.state.page * this.state.spellsPerPage) + "/" + parseInt(this.state.spellsPerPage) + "/" + this.state.search)} />
 
         { this.state.spellList.map(s => ( this._renderElement(s) )) }
 
@@ -116,6 +111,11 @@ export default class SpellList extends Component<Props>{
     }
   }
 
+  _clearFilter = () => {
+    this.setState({ search: "" });
+    this._getSpellList(this.props.navigation.state.params.url + "/" + parseInt(this.state.page * this.state.spellsPerPage) + "/" + parseInt(this.state.spellsPerPage));
+  }
+
   _prevPage = () => {
     if(this.state.page > 0){
       this._getSpellList(this.props.navigation.state.params.url + "/" + parseInt((this.state.page - 1) * this.state.spellsPerPage) + "/" + parseInt(this.state.spellsPerPage));
@@ -127,34 +127,6 @@ export default class SpellList extends Component<Props>{
     this.setState({ page: this.state.page + 1 });
   }
 
-  // Filter Functions
-  _filterSpells = (filter) => {
-    this.setState({search: filter});
-
-    let spells = this.state.spellList;
-    for(let i = 0; i < spells.length; i++){
-      // To Upper Case function needed because .includes function is case sensitive
-      if (! spells[i].name.toUpperCase().includes(filter.toUpperCase())){
-        spells[i].show = false;
-      }
-      else{
-        spells[i].show = true;
-      }
-    }
-    this.setState({spellList: spells});
-  };
-  
-  _clearFilter = () => {
-    let spells = this.state.spellList;
-
-    for(let i = 0; i < spells.length; i++){
-      if(i < this.state.spellsPerPage) spells[i].show = true;
-      else spells[i].show = false;
-    }
-
-    this.setState({spellList: spells, search: "", currentPage: 1});
-  }
-
   // Data fetching
   _getSpellList = (url) => {
     fetch(url, {
@@ -163,14 +135,11 @@ export default class SpellList extends Component<Props>{
         'Content-Type': 'application/json',
       }
     })
-    .then((res) => {
-      alert(JSON.stringify(res));
-      return res.json()})
+    .then((res) => res.json())
     .then((resJ) => {
       var spellList = resJ.data;
-      alert(JSON.stringify(resJ));
 
-      this.setState({ spellList: spellList, isLoading: false });
+      this.setState({ spellList: spellList, isLoading: false, page: 0 });
     });
   }
 }
@@ -188,19 +157,5 @@ const styles = StyleSheet.create({
     borderColor: '#A9A9A9',
     margin: 10,
     flex: 1
-  },
-  searchField: {
-    borderWidth: 1,
-    borderColor: '#a8b0bd',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingLeft: 10,
-    paddingRight: 10,
-    margin: 10
-  },
-  searchImage: {
-    height: 20,
-    width: 20
   }
 });

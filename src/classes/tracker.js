@@ -10,6 +10,7 @@ import {
 import CustomInput from '../components/textInput';
 import Counter from '../components/counter';
 import AddNew from '../components/addnew';
+
 import { getData } from '../services/asyStorage';
 
 type Props = {};
@@ -52,7 +53,6 @@ export default class Tracker extends Component<Props>{
         { this._renderNew() }
 
         { this.state.trackers.map(t => this._renderTrackers(t)) }
-
       </View>
     )
   }

@@ -11,8 +11,9 @@ import {
   Image
 } from 'react-native';
 import { Card, ListItem, Button } from 'react-native-elements';
-import AddNew from '../../components/addnew';
 import { getData } from '../../services/asyStorage';
+import AddNew from '../../components/addnew';
+import Search from '../../components/search';
 
 type Props = {};
 
@@ -50,14 +51,7 @@ export default class Notes extends Component<Props>{
     return(
       // ScrollView has to be wrapped with flex: 1 so it doesn't cut off
       <View style={{flex: 1}}>
-        {/* Search Field */}
-        <View style={styles.searchField}>
-          <Image source={require('../../resources/icons/search.png')} style={[styles.searchImage, {marginRight: 10}]} />
-          <TextInput style={{flex: 1, fontSize: 18}} placeholder="Search.." onChange={(e) => this._filterNotes(e.nativeEvent.text)} value={this.state.search} />
-          <TouchableOpacity onPress={() => this._clearFilter()}>
-            <Image source={require('../../resources/icons/clear.png')} style={styles.searchImage} />        
-          </TouchableOpacity>
-        </View>
+        <Search value={this.state.search} placeholder="Search..." onChange={(e) => this._filterNotes(e)} onConfirm={() => {}} onClear={() => this._clearFilter()} />
 
         <ScrollView>
           <AddNew title={"New Note"} callback={() => this._postNote()} />
@@ -220,19 +214,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     margin: 20,
     padding: 10
-  },
-  searchField: {
-    borderWidth: 1,
-    borderColor: '#a8b0bd',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingLeft: 10,
-    paddingRight: 10,
-    margin: 10
-  },
-  searchImage: {
-    height: 20,
-    width: 20
   }
 });
