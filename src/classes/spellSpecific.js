@@ -105,7 +105,7 @@ export default class SpellSpecific extends Component<Props>{
 
   _fetchSpell = (id) => {
     getData("ip").then((ip) => {
-      fetch(ip + "spellSpec/" + id, {
+      fetch(ip + "general/spellSpec/" + id, {
         method: "GET",
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +126,7 @@ export default class SpellSpecific extends Component<Props>{
     getData("ip").then((ip) => {
       getData("sessionId").then((sessionId) => {
         getData("charString").then((charString) => {
-          fetch(ip + 'checkCharSpell' + "/" + sessionId + "/" + charString + "/" + spellId, {
+          fetch(ip + 'character/checkSpell' + "/" + sessionId + "/" + charString + "/" + spellId, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -143,7 +143,7 @@ export default class SpellSpecific extends Component<Props>{
     getData("ip").then((ip) => {
       getData("sessionId").then((sessionId) => {
         getData("charString").then((charString) => {
-          fetch(ip + 'charSpells/' + sessionId + "/" + charString, {
+          fetch(ip + 'character/spells/' + sessionId + "/" + charString, {
             method: method,
             headers: {
               'Content-Type': 'application/json'
