@@ -87,6 +87,7 @@ export default class Money extends Component<Props>{
       })
       .then((res) => res.json())
       .then((resJ) => {
+        alert(JSON.stringify(resJ));
         this.setState({copper: resJ.data.copper, silver: resJ.data.silver, electrum: resJ.data.electrum, gold: resJ.data.gold, platinum: resJ.data.platinum, isLoading: false});
       })
       .catch((error) => {
