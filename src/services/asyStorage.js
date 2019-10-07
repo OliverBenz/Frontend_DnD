@@ -6,7 +6,7 @@ const storeData = async (key, value) => {
   } catch (error) {
     // Error saving data
   }
-} 
+}
 
 const getData = async (key) => {
   try {
