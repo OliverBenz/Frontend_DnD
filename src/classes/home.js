@@ -31,30 +31,26 @@ export default class Home extends Component<Props>{
   }
 
   componentDidMount(){
-    storeData("ip", "http://206.81.26.204:3004/dnd/").then(() => {
+    storeData("ip", "http://206.81.26.204:3004/dnd").then(() => {
       this._checkLogged();
     });
-
-    // Check if login successful after navigation back to component
+    
     this.props.navigation.addListener('willFocus', this._checkLogged);
   }
 
-  _checkLogged = () => {
-    getData("sessionId").then((sessionId) => {
-      // alert(sessionId);
-      if(sessionId === undefined){
-        this.setState({ loggedIn: false });
-      }
-      else{
-        this.setState({ loggedIn: true });
-        this._getCharList(sessionId);
-      }
-    });
+  _checkLogged = async () => {
+    const authKey = await getData("authKey");
+
+    if(authKey === undefined) this.setState({ loggedIn: false });
+    else{
+      this.setState({ loggedIn: true });
+      this._getCharList(authKey);
+    }
   }
 
   _logout = () => {
     // Clear: sessionId, charString, charList
-    remData("sessionId").then(() => {
+    remData("authKey").then(() => {
       remData("charString").then(() => {
         this.setState({ charList: [] });
         this._checkLogged();
@@ -67,11 +63,10 @@ export default class Home extends Component<Props>{
     storeData("charString", charString);
   }
 
-  _navSpellList = () => {
-    getData("ip").then((ip) => {
-      // CharSpells for +/- Button in spellList
-      this.props.navigation.navigate('SpellList', { title: "Spell List", url: ip + "general/spells", charSpells: false});
-    });
+  _navSpellList = async () => {
+    const ip = await getData("ip");
+
+    this.props.navigation.navigate('SpellList', { title: "Spell List", url: `${ip}/general/spells`, charSpells: false});
   }
 
   render(){
@@ -87,10 +82,6 @@ export default class Home extends Component<Props>{
 
         <TouchableOpacity onPress={() => this.props.navigation.navigate('Converter')} style={styles.button}>
           <Text style={styles.text}>Converter</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('Tracker')} style={styles.button}>
-          <Text style={styles.text}>Tracker</Text>
         </TouchableOpacity>
       </ScrollView>
     );
@@ -166,31 +157,31 @@ export default class Home extends Component<Props>{
   }
 
   // Data fetching
+  _getCharList = async (authKey) =>{
+    const ip = await getData("ip");
 
-  _getCharList = (sessionId) =>{
-    getData("ip").then((ip) => {
-      fetch(ip + 'user/charList/' + sessionId, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then((res) => res.json())
-      .then((resJ) => {
-        if(resJ.data.length !== 0){
-          this.setState({ charList: resJ.data });
+    fetch(`${ip}/user/charList/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authKey}`
+      }
+    })
+    .then((res) => res.json())
+    .then((resJ) => {
+      if(resJ.data.length !== 0){
+        this.setState({ charList: resJ.data });
 
-          getData("charString").then((charString) => {
-            if(charString === undefined){
-              storeData("charString", resJ.data[0].charString);
-              this.setState({ charString: resJ.data[0].charString });
-            }
-            else{
-              this.setState({ charString: charString });
-            }
-          });
-        }
-      });
+        getData("charString").then((charString) => {
+          if(charString === undefined){
+            storeData("charString", resJ.data[0].charString);
+            this.setState({ charString: resJ.data[0].charString });
+          }
+          else{
+            this.setState({ charString: charString });
+          }
+        });
+      }
     });
   }
 }

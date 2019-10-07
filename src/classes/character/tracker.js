@@ -7,11 +7,11 @@ import {
   Text,
   TouchableOpacity
 } from 'react-native';
-import CustomInput from '../components/textInput';
-import Counter from '../components/counter';
-import AddNew from '../components/addnew';
+import CustomInput from '../../components/textInput';
+import Counter from '../../components/counter';
+import AddNew from '../../components/addnew';
 
-import { getData } from '../services/asyStorage';
+import { getData } from '../../services/asyStorage';
 
 type Props = {};
 
@@ -35,6 +35,14 @@ export default class Tracker extends Component<Props>{
     };
   }
 
+  componentWillUnmount(){
+    let trackers = this.state.trackers;
+
+    for(let i = 0; i < trackers.length; i++){
+      this._updateTracker(trackers[i].id, trackers[i].value);
+    }
+  }
+
   componentDidMount(){
     this.setState({ isLoading: true });
 
@@ -42,10 +50,6 @@ export default class Tracker extends Component<Props>{
   }
 
   render(){
-    // TODO: Lucky feat tracker
-    // TODO: Spell slot tracker
-    // TODO: Hit Dice tracker
-    // TODO: 
     return(
       <View>
         <AddNew title={"Add new Tracker"} callback={() => this.setState({ showNew: !this.state.showNew })} />
@@ -76,7 +80,6 @@ export default class Tracker extends Component<Props>{
   }
 
   // Tracker functions
-
   _renderTrackers = (t) => {
     return(
       <View key={t.id}>
@@ -93,49 +96,84 @@ export default class Tracker extends Component<Props>{
   }
 
   // Data fetching
-  _getTrackers = () => {
-    getData("ip").then((ip) => {
-      getData("sessionId").then((sessionId) => {
-        getData("charString").then((charString) => {
-          fetch(ip + "character/trackers/" + sessionId + "/" + charString, {
-            method: "GET",
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          })
-          .then((res) => res.json())
-          .then((resJ) => {
-            this.setState({ trackers: resJ.data, isLoading: false });
-          })
-       });
-      });
+  _getTrackers = async () => {
+    const ip = await getData("ip");
+    const authKey = await getData("authKey");
+    const charString = await getData("charString");
+
+    fetch(`${ip}/character/trackers/${charString}`, {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authKey}`
+      },
+    })
+    .then((res) => res.json())
+    .then((resJ) => {
+      this.setState({ trackers: resJ.data, isLoading: false });
     });
   }
 
-  _postTracker = () => {
-    getData("ip").then((ip) => {
-      getData("sessionId").then((sessionId) => {
-        getData("charString").then((charString) => {
-          fetch(ip + "character/trackers/" + sessionId + "/" + charString, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              "title": this.state.newTitle,
-              "minValue": this.state.newMin,
-              "maxValue": this.state.newMax,
-              "value": this.state.newVal
-            }),
-          })
-          .then((res) => res.json())
-          .then((resJ) => {
-            this.setState({ newTitle: "", newMin: undefined, newMax: undefined, newVal: undefined, showNew: false });
-            this._getTrackers();
-          });
-        });
-      });
+  _postTracker = async () => {
+    const ip = await getData("ip");
+    const authKey = await getData("authKey");
+    const charString = await getData("charString");
+
+    fetch(`${ip}/character/trackers/${charString}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authKey}`
+      },
+      body: JSON.stringify({
+        "title": this.state.newTitle,
+        "trackMin": this.state.newMin,
+        "trackMax": this.state.newMax,
+        "trackValue": this.state.newVal
+      }),
+    })
+    .then((res) => res.json())
+    .then((resJ) => {
+      this.setState({ newTitle: "", newMin: undefined, newMax: undefined, newVal: undefined, showNew: false });
+      this._getTrackers();
     });
+  }
+
+  _updateTracker = async (id, value) => {
+    const ip = await getData("ip");
+    const authKey = await getData("authKey");
+    const charString = await getData("charString");
+
+    fetch(`${ip}/character/trackers/${charString}`, {
+      method: "PATCH",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authKey}`
+      },
+      body: JSON.stringify({
+        "id": id,
+        "trackValue": value
+      })
+    })
+    .then((res) => res.json())
+    .then((resJ) => {}); 
+  }
+
+  _delTracker = async (id) => {
+    const ip = await getData("ip");
+    const authKey = await getData("authKey");
+    const charString = await getData("charString");
+
+    fetch(`${ip}/character/trackers/${charString}/${id}`, {
+      method: "DELETE",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authKey}`
+      }
+    })
+    .then((res) => res.json())
+    .then((resJ) => {}
+    )
   }
 
 }

@@ -42,17 +42,15 @@ export default class Account extends Component<Props>{
   // Show or hide password input field
   _delSwitch = (charString) => {
     let charList = this.state.charList;
-    for(let i = 0; i < charList.length; i++){
-      if(charList[i]["charString"] === charString){
-        charList[i]["del"] = !charList[i]["del"];
-        this.setState({ charList: charList });
-        break;
-      }
-    }
+    let id = charList.findIndex(c => c.charString === charString);
+
+    charList[id].del = !charList[id].del;
+    this.setState({ charList });
   }
   
   _editChar = (charString) => {
     alert(charString);
+    // TODO: Implement
   }
 
   render(){
@@ -73,8 +71,6 @@ export default class Account extends Component<Props>{
   _renderChars = (c) => {
     // Render an input field for password if delete is true
     if(c["del"]){
-      // TODO: Update design
-      // TODO: Implement functionality
       return(
         // Container
         <View style={styles.container} key={c.charString}>
@@ -134,33 +130,33 @@ export default class Account extends Component<Props>{
 
   // Data fetching
 
-  _delCharAPI = (charString, password) => {
-    getData("ip").then((ip) => {
-      getData("sessionId").then((sessionId) => {
-        fetch(ip + "user/character/" + sessionId, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            "charString": charString,
-            "password": password
-          })
-        })
-        .then((res) => res.json())
-        .then((resJ) => {
-          if(resJ.success){
-            // Remove character from charList
-            let charList = this.state.charList;
-            
-            charList.splice(charList.findIndex(c => c.charString === charString), 1)
-            this.setState({ charList: charList, password: "" });
-          }
-          else{
-            alert(resJ.message);
-          }
-        });
-      });
+  _delCharAPI = async (charString, password) => {
+    const ip = await getData("ip");
+    const authKey = await getData("authKey");
+
+    fetch(`${ip}/user/character`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authKey}`
+      },
+      body: JSON.stringify({
+        "charString": charString,
+        "password": password
+      })
+    })
+    .then((res) => res.json())
+    .then((resJ) => {
+      if(resJ.success){
+        // Remove character from charList
+        let charList = this.state.charList;
+        
+        charList.splice(charList.findIndex(c => c.charString === charString), 1)
+        this.setState({ charList: charList, password: "" });
+      }
+      else{
+        alert(resJ.message);
+      }
     });
   }
 }

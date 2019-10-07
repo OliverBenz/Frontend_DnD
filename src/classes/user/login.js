@@ -45,27 +45,27 @@ export default class Login extends Component<Props>{
   }
 
   // Data fetching
-
-  _postBackend = () => {
+  _postBackend = async () => {
     if(this.state.email != "" && this.state.password != ""){
-      getData("ip").then((ip) => {
-        fetch(ip + 'user/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: this.state.email,
-            password: this.state.password
-          }),
-        })
-        .then((res) => res.json())
-        .then((resJ) => {
-          storeData("sessionId", resJ.data.sessionId);
-          
-          this.props.navigation.navigate('Home');
-        });
+      const ip = await getData("ip");
+
+      fetch(`${ip}/user/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: this.state.email,
+          password: this.state.password
+        }),
+      })
+      .then((res) => res.json())
+      .then((resJ) => {
+        storeData("authKey", resJ.data);
+        
+        this.props.navigation.navigate('Home');
       });
+
     }
   }
 }

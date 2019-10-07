@@ -48,8 +48,6 @@ export default class NewChar extends Component<Props>{
       electrum: undefined,
       gold: undefined,
       platinum: undefined,
-
-
     };
   }
 
@@ -168,70 +166,71 @@ export default class NewChar extends Component<Props>{
   }
 
   // Data fetching
-  _getAlignments = () => {
-    getData("ip").then((ip) => {
-      fetch(ip + "general/alignments", {
-        method: "GET",
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then((res) => res.json())
-      .then((resJ) => this.setState({ alignments: resJ.data, alignment: resJ.data[0]["id"] }));
-    });
+  _getAlignments = async () => {
+    const ip = await getData("ip");
+
+    fetch(`${ip}/general/alignments`, {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then((res) => res.json())
+    .then((resJ) => this.setState({ alignments: resJ.data, alignment: resJ.data[0].id }));
+
   }
   
-  _getBackgrounds = () => {
-    getData("ip").then((ip) => {
-      fetch(ip + "general/backgrounds", {
-        method: "GET",
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      })
-      .then((res) => res.json())
-      .then((resJ) => this.setState({ backgrounds: resJ.data, background: resJ.data[0]["id"] }));
-    });
+  _getBackgrounds = async () => {
+    const ip = await getData("ip");
+
+    fetch(`${ip}/general/backgrounds`, {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    .then((res) => res.json())
+    .then((resJ) => this.setState({ backgrounds: resJ.data, background: resJ.data[0]["id"] }));
   }
 
-  _postCharacter = () => {
+  _postCharacter = async () => {
     if(this._checkValues()){
-      getData("ip").then((ip) => {
-        getData("sessionId").then((sessionId) => {
-          fetch(ip + "user/character/" + sessionId, {
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              firstname: this.state.firstname,
-              lastname: this.state.lastname,
-              level: this.state.level,
-              xp: this.state.xp,
-              
-              background: this.state.background,
-              alignment: this.state.alignment,
-              age: this.state.age,
-              height: this.state.height,
-              weight: this.state.weight,
-              
-              maxHealth: this.state.maxHealth,
-              tempHealth: this.state.tempHealth,
-              currentHealth: this.state.currentHealth,
+      const ip = await getData("ip");
+      const authKey = await getData("authKey");
 
-              copper: this.state.copper,
-              silver: this.state.silver,
-              electrum: this.state.electrum,
-              gold: this.state.gold,
-              platinum: this.state.platinum
-            })
-          })
-          .then((res) => res.json())
-          .then((resJ) => {
-            storeData("charString", resJ.data.charString);
-            this.props.navigation.navigate("Home");
-          });
-        });
+      fetch(`${ip}/user/character`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${authKey}`
+        },
+        body: JSON.stringify({
+          firstname: this.state.firstname,
+          lastname: this.state.lastname,
+          level: this.state.level,
+          xp: this.state.xp,
+          
+          background: this.state.background,
+          alignment: this.state.alignment,
+          age: this.state.age,
+          height: this.state.height,
+          weight: this.state.weight,
+          
+          maxHealth: this.state.maxHealth,
+          tempHealth: this.state.tempHealth,
+          currentHealth: this.state.currentHealth,
+
+          copper: this.state.copper,
+          silver: this.state.silver,
+          electrum: this.state.electrum,
+          gold: this.state.gold,
+          platinum: this.state.platinum
+        })
+      })
+      .then((res) => res.json())
+      .then((resJ) => {
+        storeData("charString", resJ.data.charString);
+        this.props.navigation.navigate("Home");
       });
     }
   }

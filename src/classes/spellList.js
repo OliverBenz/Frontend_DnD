@@ -14,6 +14,7 @@ import {
 import { Card } from 'react-native-elements';
 
 import Search from '../components/search';
+import { getData } from '../services/asyStorage';
 
 type Props = {};
 
@@ -128,12 +129,13 @@ export default class SpellList extends Component<Props>{
   }
 
   // Data fetching
-  _getSpellList = (url) => {
+  _getSpellList = async (url) => {
+    const authKey = await getData("authKey");
+    const header = authKey === undefined ? {'Content-Type': 'application/json'} : {'Content-Type': 'application/json', 'Authorization': `Basic ${authKey}`};
+    
     fetch(url, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      }
+      headers: header
     })
     .then((res) => res.json())
     .then((resJ) => {

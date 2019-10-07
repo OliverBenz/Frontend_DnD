@@ -112,100 +112,98 @@ export default class Notes extends Component<Props>{
   }
 
   // Data fetching
-  _fetchNotes = () => {
-    getData("ip").then((ip) => {
-      getData("sessionId").then((sessionId) => {
-        getData("charString").then((charString) => {
-          fetch(ip + "character/notes/" + sessionId + "/" + charString, {
-            method: "GET",
-            headers: {
-              'Content-Type': 'application/json',
-            }
-          })
-          .then((res) => res.json())
-          .then((resJ) => {
-            for(let i = 0; i < resJ.data.length; i++){
-              let dateSplit = resJ.data[i].date.split("T")[0].split("-");
-              resJ.data[i].date = dateSplit[2] + "." + dateSplit[1] + "." + dateSplit[0];
-              resJ.data[i].show = true;
-            }
-            this.setState({ notes: resJ.data });
-          });
-        });
-      });
+  _fetchNotes = async () => {
+    const ip = await getData("ip");
+    const authKey = await getData("authKey");
+    const charString = await getData("charString");
+
+    fetch(`${ip}/character/notes/${charString}`, {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authKey}`
+      }
+    })
+    .then((res) => res.json())
+    .then((resJ) => {
+      if(resJ.data.length > 0){
+        for(let i = 0; i < resJ.data.length; i++){
+          let dateSplit = resJ.data[i].date.split("T")[0].split("-");
+          resJ.data[i].date = dateSplit[2] + "." + dateSplit[1] + "." + dateSplit[0];
+          resJ.data[i].show = true;
+        }
+      }
+      this.setState({ notes: resJ.data });
     });
   }
 
-  _updateNote = (id) => {
-    let note = this.state.notes[this.state.notes.findIndex(x => x.id === id)];
+  _updateNote = async (id) => {
+    const note = this.state.notes[this.state.notes.findIndex(x => x.id === id)];
 
-    getData("ip").then((ip) => {
-      getData("sessionId").then((sessionId) => {
-        getData("charString").then((charString) => {
-          fetch(ip + "character/notes/" + sessionId + "/" + charString, {
-            method: "PATCH",
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              "id": note.id,
-              "note": note.note
-            })
-          })
-          .then((res) => res.json())
-          .then((resJ) => {});
-        });
-      });
-    });
+    const ip = await getData("ip");
+    const authKey = await getData("authKey");
+    const charString = await getData("charString");
+
+    fetch(`${ip}/character/notes/${charString}`, {
+      method: "PATCH",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authKey}`
+      },
+      body: JSON.stringify({
+        "id": note.id,
+        "note": note.note
+      })
+    })
+    .then((res) => res.json())
+    .then((resJ) => {});
+
   }
 
-  _postNote = () => {
+  _postNote = async () => {
     let today = new Date();
     today = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, '0') + "-" + String(today.getDate()).padStart(2, '0') + " " + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     
-    getData("ip").then((ip) => {
-      getData("sessionId").then((sessionId) => {
-        getData("charString").then((charString) => {
-          fetch(ip + "character/notes/" + sessionId + "/" + charString, {
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              "date": today,
-              "note": ""
-            })
-          })
-          .then((res) => res.json())
-          .then((resJ) => {
-            resJ.data.show = true;
-            var obj = this.state.notes;
-            obj.unshift(resJ.data);
-            this.setState({ notes: obj });
-          });
-        });
-      });
+    const ip = await getData("ip");
+    const authKey = await getData("authKey");
+    const charString = await getData("charString");
+
+    fetch(`${ip}/character/notes/${charString}`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authKey}`
+      },
+      body: JSON.stringify({
+        "date": today,
+        "note": ""
+      })
+    })
+    .then((res) => res.json())
+    .then((resJ) => {
+      resJ.data.show = true;
+      var obj = this.state.notes;
+      obj.unshift(resJ.data);
+      this.setState({ notes: obj });
     });
+
   }
 
-  _delNote = (id) => {
-    getData("ip").then((ip) => {
-      getData("sessionId").then((sessionId) => {
-        getData("charString").then((charString) => {
-          fetch(ip + "character/notes/" + sessionId + "/" + charString, {
-            method: "DELETE",
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              "id": id
-            })
-          })
-          .then((res) => res.json())
-          .then((resJ) => {});
-        });
-      });
-    });
+  _delNote = async (id) => {
+    const ip = await getData("ip");
+    const authKey = await getData("authKey");
+    const charString = await getData("charString");
+
+    fetch(`${ip}/character/notes/${charString}/${id}`, {
+      method: "DELETE",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authKey}`
+      },
+      body: JSON.stringify()
+    })
+    .then((res) => res.json())
+    .then((resJ) => {});
   }
 }
 

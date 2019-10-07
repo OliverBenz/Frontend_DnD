@@ -29,15 +29,13 @@ export default class Character extends Component<Props>{
     this.state = { };
   }
 
-  _navSpells = () => {
-    getData("sessionId").then((sessionId) => {
-      getData("charString").then((charString) => {
-        getData("ip").then((ip) => {
-          // CharSpells for +/- Button in spellList
-          this.props.navigation.navigate('SpellList', { title: "Spell List", url: ip + "character/spells/" + sessionId + "/" + charString, charSpells: true });
-        });
-      });
-    });
+  _navSpells = async () => {
+    const ip = await getData("ip");
+    const charString = await getData("charString");
+
+    // CharSpells for +/- Button in spellList
+    this.props.navigation.navigate('SpellList', { title: "Spell List", url: `${ip}/character/spells/${charString}`, charSpells: true });
+
   }
 
   render(){
@@ -53,6 +51,10 @@ export default class Character extends Component<Props>{
 
         <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate("Notes")}>
           <Text>Notes</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('Tracker')}>
+          <Text style={styles.text}>Tracker</Text>
         </TouchableOpacity>
       </ScrollView>
     )

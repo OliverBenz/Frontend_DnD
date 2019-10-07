@@ -28,19 +28,11 @@ export default class Health extends Component<Props>{
   componentDidMount(){
     this.setState({ isLoading: true });
 
-    getData("sessionId").then((sessionId) => {
-      getData("charString").then((charString) =>{
-        this._getAPI(sessionId, charString);
-      });
-    });
+    this._getHealth();
   }
 
   componentWillUnmount(){
-    getData("sessionId").then((sessionId) => {
-      getData("charString").then((charString) =>{
-        this._postAPI(sessionId, charString);
-      });
-    });
+    this._postHealth();
   }
 
   render(){
@@ -68,42 +60,47 @@ export default class Health extends Component<Props>{
 
   // Data fetching
 
-  _getAPI = (sessionId, charString) => {
-    getData("ip").then((ip) => {
-      fetch(ip + 'character/health/' + sessionId + '/' + charString, {
-        mehod: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      })
-      .then((res) => res.json())
-      .then((resJ) => {
-        this.setState({maxHealth: resJ.data.maxHealth, currentHealth: resJ.data.currentHealth, tempHealth: resJ.data.tempHealth, isLoading: false});
-      })
-      .catch((error) => {
-        alert(error)
-      });
+  _getHealth = async () => {
+    const ip = await getData("ip");
+    const authKey = await getData("authKey");
+    const charString = await getData("charString");
+
+    fetch(`${ip}/character/health/${charString}`, {
+      mehod: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authKey}`
+      }
+    })
+    .then((res) => res.json())
+    .then((resJ) => {
+      this.setState({maxHealth: resJ.data.maxHealth, currentHealth: resJ.data.currentHealth, tempHealth: resJ.data.tempHealth, isLoading: false});
+    })
+    .catch((error) => {
+      alert(error)
     });
   }
 
-  _postAPI = (sessionId, charString) => {
-    if(!(this.state.maxHealth === undefined && this.state.currentHealth === undefined && this.state.tempHealth === undefined)){
+  _postHealth = async () => {
       this._checkData();
+
+      const ip = await getData("ip");
+      const authKey = await getData("authKey");
+      const charString = await getData("charString");
+      const { maxHealth, currentHealth, tempHealth } = this.state;
       
-      getData("ip").then((ip) => {
-        fetch(ip + 'character/health/' + sessionId + '/' + charString, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            maxHealth: this.state.maxHealth,
-            currentHealth: this.state.currentHealth,
-            tempHealth: this.state.tempHealth
-          }),
-        });
+      fetch(`${ip}/character/health/${charString}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${authKey}`
+        },
+        body: JSON.stringify({
+          maxHealth: maxHealth,
+          currentHealth: currentHealth,
+          tempHealth: tempHealth
+        }),
       });
-    }
   }
 
   _checkData = () => {

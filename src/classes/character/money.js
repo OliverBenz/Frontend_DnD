@@ -31,18 +31,13 @@ export default class Money extends Component<Props>{
   componentDidMount(){
     this.setState({ isLoading: true });
 
-    getData("sessionId").then((sessionId) => {
-      getData("charString").then((charString) => {
-        this.setState({ sessionId: sessionId, charString: charString });
-        this._getAPI(sessionId, charString);
-      });
-    });    
+    this._getMoney();
   }
 
   componentWillUnmount(){
     getData("sessionId").then((sessionId) => {
       getData("charString").then((charString) => {
-        this._postAPI(sessionId, charString);
+        this._postMoney();
       });
     });
   }
@@ -77,43 +72,51 @@ export default class Money extends Component<Props>{
 
   // Data fetching
 
-  _getAPI = (sessionId, charString) => {
-    getData("ip").then((ip) => {
-      fetch(ip + 'character/money/' + sessionId + '/' + charString, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      })
-      .then((res) => res.json())
-      .then((resJ) => {
-        this.setState({copper: resJ.data.copper, silver: resJ.data.silver, electrum: resJ.data.electrum, gold: resJ.data.gold, platinum: resJ.data.platinum, isLoading: false});
-      })
-      .catch((error) => {
-        alert(error);
-      });
+  _getMoney = async () => {
+    const ip = await getData("ip");
+    const authKey = await getData("authKey");
+    const charString = await getData("charString");
+    
+    fetch(`${ip}/character/money/${charString}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authKey}`
+      }
+    })
+    .then((res) => res.json())
+    .then((resJ) => {
+      this.setState({copper: resJ.data.copper, silver: resJ.data.silver, electrum: resJ.data.electrum, gold: resJ.data.gold, platinum: resJ.data.platinum, isLoading: false});
+    })
+    .catch((error) => {
+      alert(error);
     });
+
   }
 
-  _postAPI = (sessionId, charString) => {
-    if(!(this.state.copper === undefined && this.state.silver === undefined && this.state.electrum === undefined && this.state.gold === undefined && this.state.platinum === undefined)){
-      this._checkData();
-      getData("ip").then((ip) => {
-        fetch(ip + 'character/money/' + sessionId + '/' + charString, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            copper: this.state.copper,
-            silver: this.state.silver,
-            electrum: this.state.electrum,
-            gold: this.state.gold,
-            platinum: this.state.platinum
-          }),
-        });
-      });
-    }
+  _postMoney = async () => {
+    this._checkData();
+
+    const ip = await getData("ip");
+    const authKey = await getData("authKey");
+    const charString = await getData("charString");
+    const { copper, silver, electrum, gold, platinum } = this.state;
+    
+    fetch(`${ip}/character/money/${charString}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authKey}`
+      },
+      body: JSON.stringify({
+        copper: copper,
+        silver: silver,
+        electrum: electrum,
+        gold: gold,
+        platinum: platinum
+      }),
+    });
+
   }
 
   _checkData = () => {

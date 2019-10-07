@@ -50,32 +50,52 @@ export default class SpellSpecific extends Component<Props>{
   render(){
     return(
       <ScrollView style={styles.container}>
-        {/* Heading 1 */}
-        <View style={{flexDirection: 'row', marginBottom: 10}}>
-        {/* TODO: Remove name from fields, second row only components and duration */}
-          <Text style={[styles.text, {flex: 1, marginRight: 5, textAlign: 'center'}]}>Range</Text>
-          <Text style={[styles.text, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>Cast Time</Text>
-          <Text style={[styles.text, {flex: 3, marginLeft: 5}]}>Duration</Text>
+        {/* Listing */}
+        <View style={styles.textContainer}>
+          <Text style={styles.header}>School: </Text>
+          <Text style={styles.text}>{ this.state.spell.schoolName }</Text>
         </View>
 
-        {/* Spell Data Row 1 */}
-        <View style={{flexDirection: 'row', marginBottom: 20}}>
-          <Text style={[styles.textBorder, {flex: 1, marginRight: 5, textAlign: 'center'}]}>{ this.state.spell.range }</Text>
-          <Text style={[styles.textBorder, {flex: 1, marginLeft: 5, marginRight: 5, textAlign: 'center'}]}>{ this.state.spell.castTime }</Text>
-          <Text style={[styles.textBorder, {flex: 3, marginLeft: 5}]}>{ this.state.spell.duration }</Text>
-        </View>
-        
-        {/* Heading 2 */}
-        <View style={{flexDirection: 'row', marginBottom: 20}}>
-          <Text style={[styles.text, {flex: 3}]}>Components</Text>
+        <View style={styles.textContainer}>
+          <Text style={styles.header}>Casting Time: </Text>
+          <Text style={styles.text}>{ this.state.spell.castTime }</Text>
         </View>
 
-        {/* Spell Data Row 2 */}
-        <View style={{flexDirection: 'row', marginBottom: 20}}>
-          <Text style={[styles.textBorder, {flex: 3}]}>{ this.state.spell.components }</Text>
+        <View style={styles.textContainer}>
+          <Text style={styles.header}>Range: </Text>
+          <Text style={styles.text}>{ this.state.spell.rage }</Text>
         </View>
 
-        <Text style={styles.textBorder}>{ this.state.spell.desc }</Text>
+        <View style={styles.textContainer}>
+          <Text style={styles.header}>Components: </Text>
+          <Text style={styles.text}>{ this.state.spell.material }</Text>
+        </View>
+
+        <View style={styles.textContainer}>
+          <Text style={styles.header}>Duration: </Text>
+          <Text style={styles.text}>{ this.state.spell.duration }</Text>
+        </View>
+
+        <View style={styles.textContainer}>
+          <Text style={styles.header}>Page: </Text>
+          <Text style={styles.text}>{ this.state.spell.page }</Text>
+        </View>
+
+        <View style={styles.textContainer}>
+          <Text style={styles.header}>Ritual: </Text>
+          <Text style={styles.text}>{ this.state.spell.ritual }</Text>
+        </View>
+
+        <View style={styles.textContainer}>
+          <Text style={styles.header}>Concentration: </Text>
+          <Text style={styles.text}>{ this.state.spell.concentration }</Text>
+        </View>
+
+        <Text style={[styles.header, {marginTop: 20}]}>Description</Text>
+        <Text style={styles.text}>{ this.state.spell.desc }</Text>
+
+        <Text style={[styles.header, {marginTop: 20}]}>At Higher Levels:</Text>
+        <Text style={styles.text}>{ this.state.spell.higher_level }</Text>
 
         { this._renderButton() }
       </ScrollView>
@@ -103,64 +123,57 @@ export default class SpellSpecific extends Component<Props>{
 
   // Data fetching
 
-  _fetchSpell = (id) => {
-    getData("ip").then((ip) => {
-      fetch(ip + "general/spellSpec/" + id, {
-        method: "GET",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      .then((res) => res.json())
-      .then((resJ) => {
-        if(resJ["success"]){
-          this.setState({ spell: resJ.data[0] });
-          this._checkIfHas(id);
-        };
-      });
+  _fetchSpell = async (id) => {
+    const ip = await getData("ip");
+
+    fetch(`${ip}/general/spellSpec/${id}`, {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((res) => res.json())
+    .then((resJ) => {
+      if(resJ.success){
+        this.setState({ spell: resJ.data[0] });
+        this._checkIfHas(id);
+      };
     });
+
   }
 
-  _checkIfHas = (spellId) => {
-    // Check if character has spell in list
-    getData("ip").then((ip) => {
-      getData("sessionId").then((sessionId) => {
-        getData("charString").then((charString) => {
-          fetch(ip + 'character/checkSpell' + "/" + sessionId + "/" + charString + "/" + spellId, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          })
-          .then((res) => res.json())
-          .then((resJ) => this.setState({ userHas: resJ.data }));
-        });
-      });
-    });
+  // Check if character has spell in list
+  _checkIfHas = async (spellId) => {
+    const ip = await getData("ip");
+    const authKey = await getData("authKey");
+    const charString = await getData("charString");
+
+    fetch(`${ip}/character/checkSpell/${charString}/${spellId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authKey}`
+      },
+    })
+    .then((res) => res.json())
+    .then((resJ) => this.setState({ userHas: resJ.data }));
   }
 
-  _updateCharSpells = (spellId, method) => {
-    getData("ip").then((ip) => {
-      getData("sessionId").then((sessionId) => {
-        getData("charString").then((charString) => {
-          fetch(ip + 'character/spells/' + sessionId + "/" + charString, {
-            method: method,
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              "spellId": spellId
-            }),
-          })
-          .then((res) => res.json())
-          .then((resJ) => {
-            if(resJ.success){
-              if(method === "POST") this.setState({ userHas: resJ.data });
-              if(method === "DELETE") this.setState({ userHas: resJ.data });
-            }
-            });
-        });
-      });
+  _updateCharSpells = async (spellId, method) => {
+    const ip = await getData("ip");
+    const authKey = await getData("authKey");
+    const charString = await getData("charString");
+
+    fetch(`${ip}/character/spells/${charString}/${spellId}`, {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authKey}`
+      }
+    })
+    .then((res) => res.json())
+    .then((resJ) => {
+      if(resJ.success) this.setState({ userHas: resJ.data });
     });
   }
 }
@@ -168,17 +181,19 @@ export default class SpellSpecific extends Component<Props>{
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
-    backgroundColor: '#ededed',
+    // backgroundColor: '#ededed',
     padding: 10
   },
-  textBorder: {
-    fontSize: 18,
-    // borderWidth: 1,
-    // borderColor: '#a8b0bd',
-    backgroundColor: '#f7f7f7'
+  textContainer: {
+    flexDirection: 'row',
+    marginBottom: 5
   },
   text: {
     fontSize: 18
+  },
+  header:{
+    fontSize: 18,
+    fontWeight: 'bold'
   },
   button: {
     flexDirection: 'row',
