@@ -14,11 +14,10 @@ import {
 import { Card } from 'react-native-elements';
 
 import Search from '../components/search';
+import NavButtons from '../components/navButtons';
 import { getData } from '../services/asyStorage';
 
-type Props = {};
-
-export default class SpellList extends Component<Props>{
+export default class SpellList extends Component{
   static navigationOptions = ({navigation}) => {
     return{
       title: navigation.getParam('title')
@@ -33,7 +32,7 @@ export default class SpellList extends Component<Props>{
       search: "",
 
       spellsPerPage: 20,
-      page: 0,
+      lastPage: false,
 
       isLoading: false
     }
@@ -41,7 +40,7 @@ export default class SpellList extends Component<Props>{
 
   componentDidMount(){
     this.setState({isLoading: true});
-    this._getSpellList(this.props.navigation.state.params.url + "/" + parseInt(this.state.page * this.state.spellsPerPage) + "/" + parseInt(this.state.spellsPerPage));
+    this._getSpellList(1);
   }
 
   _inspectSpell = (id) => {
@@ -65,7 +64,7 @@ export default class SpellList extends Component<Props>{
 
         { this.state.spellList.map(s => ( this._renderElement(s) )) }
 
-        { this._renderButtons() }
+        <NavButtons lastPage={this.state.lastPage} onPageChange={(p) => {this._getSpellList(p)}} />
       </ScrollView>
     );
   }
@@ -83,53 +82,14 @@ export default class SpellList extends Component<Props>{
     )
   }
 
-  _renderButtons = () => {
-    if(this.state.page === 0){
-      return(
-        <View style={{flexDirection: 'row'}}>
-          <View style={{flex: 2}}></View>
-
-          <TouchableOpacity style={styles.button} onPress={()=> this._nextPage()}>
-            <Text>Next</Text>
-          </TouchableOpacity>
-        </View>
-      )
-    }
-    else{
-      return(
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={styles.button} onPress={()=> this._prevPage()}>
-            <Text>Back</Text>
-          </TouchableOpacity>
-
-          <View style={{flex: 1}}></View>
-
-          <TouchableOpacity style={styles.button} onPress={()=> this._nextPage()}>
-            <Text>Next</Text>
-          </TouchableOpacity>
-        </View>
-      )
-    }
-  }
-
   _clearFilter = () => {
     this.setState({ search: "" });
     this._getSpellList(this.props.navigation.state.params.url + "/" + parseInt(this.state.page * this.state.spellsPerPage) + "/" + parseInt(this.state.spellsPerPage));
   }
 
-  _prevPage = () => {
-    if(this.state.page > 0){
-      this._getSpellList(this.props.navigation.state.params.url + "/" + parseInt((this.state.page - 1) * this.state.spellsPerPage) + "/" + parseInt(this.state.spellsPerPage));
-      this.setState({ page: this.state.page - 1 });
-    }
-  }
-  _nextPage = () => {
-    this._getSpellList(this.props.navigation.state.params.url + "/" + parseInt((this.state.page + 1) * this.state.spellsPerPage) + "/" + parseInt(this.state.spellsPerPage));
-    this.setState({ page: this.state.page + 1 });
-  }
-
   // Data fetching
-  _getSpellList = async (url) => {
+  _getSpellList = async (page) => {
+    let url = `${this.props.navigation.state.params.url}/${(page-1) * this.state.spellsPerPage}/${this.state.spellsPerPage}`;
     const authKey = await getData("authKey");
     const header = authKey === undefined ? {'Content-Type': 'application/json'} : {'Content-Type': 'application/json', 'Authorization': `Basic ${authKey}`};
     
@@ -139,9 +99,11 @@ export default class SpellList extends Component<Props>{
     })
     .then((res) => res.json())
     .then((resJ) => {
-      var spellList = resJ.data;
-
-      this.setState({ spellList: spellList, isLoading: false, page: 0 });
+      if(resJ.success){
+        if(resJ.data.length < this.state.spellsPerPage) this.setState({ spellList: resJ.data, lastPage: true });
+        else this.setState({ spellList: resJ.data });
+        if(this.state.isLoading === true) this.setState({ isLoading: false });
+      }
     });
   }
 }
