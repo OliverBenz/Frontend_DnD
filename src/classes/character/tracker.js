@@ -8,10 +8,10 @@ import {
   TouchableOpacity
 } from 'react-native';
 import CustomInput from '../../components/textInput';
-import Counter from '../../components/counter';
+import { Counter, CounterWM } from '../../components/counter';
 import AddNew from '../../components/addnew';
 
-import { getData } from '../../services/asyStorage';
+import { getMultiple } from '../../services/asyStorage';
 
 type Props = {};
 
@@ -38,9 +38,12 @@ export default class Tracker extends Component<Props>{
   componentWillUnmount(){
     let trackers = this.state.trackers;
 
-    for(let i = 0; i < trackers.length; i++){
-      this._updateTracker(trackers[i].id, trackers[i].value);
-    }
+    trackers.map(t => this._checkUnmount(t));
+  }
+
+  _checkUnmount = (t) => {
+    if(t.title === "DELETE") this._delTracker(t.id);
+    else this._updateTracker(t);
   }
 
   componentDidMount(){
@@ -81,25 +84,33 @@ export default class Tracker extends Component<Props>{
 
   // Tracker functions
   _renderTrackers = (t) => {
-    return(
-      <View key={t.id}>
-        <Text style={{fontSize: 20}} >{t.title}</Text>
-        {/* callback={(e) => this.setState({ trackers[].value: e })} */}
-        <Counter value={t.value} min={t.minValue} max={t.maxValue}  onChange={(e) => alert(e)} callback={(e) => this._changeTracker(t.id, e)} />
-      </View>
-    )
+    if(t.maxValue !== 0){
+      return(
+        <View key={t.id}>
+          <CounterWM title={t.title} value={t.value} min={t.minValue} max={t.maxValue} onTitleChange={(e) => this._changeTracker(t.id, e, "title")} onChange={(e) => alert(e)} callback={(e) => this._changeTracker(t.id, e, "value")} />
+        </View>
+      );      
+    }
+    else{
+      return(
+        <View key={t.id}>
+          <Counter title={t.title} value={t.value} min={t.minValue} max={t.maxValue} onTitleChange={(e) => this._changeTracker(t.id, e, "title")} onChange={(e) => alert(e)} callback={(e) => this._changeTracker(t.id, e, "value")} />
+        </View>
+      );
+    }
   }
-  _changeTracker= (id, val) => {
+
+  _changeTracker= (id, val, type) => {
     let trackers = this.state.trackers;
-    trackers[trackers.findIndex(t => t.id === id)].value = val;
+    if(type === "title") trackers[trackers.findIndex(t => t.id === id)].title = val;
+    if(type === "value") trackers[trackers.findIndex(t => t.id === id)].value = val;
+
     this.setState({ trackers });
   }
 
   // Data fetching
   _getTrackers = async () => {
-    const ip = await getData("ip");
-    const authKey = await getData("authKey");
-    const charString = await getData("charString");
+    const { ip, authKey, charString } = await getMultiple(["ip", "authKey", "charString"]);
 
     fetch(`${ip}/character/trackers/${charString}`, {
       method: "GET",
@@ -115,9 +126,7 @@ export default class Tracker extends Component<Props>{
   }
 
   _postTracker = async () => {
-    const ip = await getData("ip");
-    const authKey = await getData("authKey");
-    const charString = await getData("charString");
+    const { ip, authKey, charString } = await getMultiple(["ip", "authKey", "charString"]);
 
     fetch(`${ip}/character/trackers/${charString}`, {
       method: 'POST',
@@ -139,10 +148,8 @@ export default class Tracker extends Component<Props>{
     });
   }
 
-  _updateTracker = async (id, value) => {
-    const ip = await getData("ip");
-    const authKey = await getData("authKey");
-    const charString = await getData("charString");
+  _updateTracker = async (t) => {
+    const { ip, authKey, charString } = await getMultiple(["ip", "authKey", "charString"]);
 
     fetch(`${ip}/character/trackers/${charString}`, {
       method: "PATCH",
@@ -151,8 +158,9 @@ export default class Tracker extends Component<Props>{
         'Authorization': `Basic ${authKey}`
       },
       body: JSON.stringify({
-        "id": id,
-        "trackValue": value
+        "id": t.id,
+        "trackTitle": t.title,
+        "trackValue": t.value
       })
     })
     .then((res) => res.json())
@@ -160,9 +168,7 @@ export default class Tracker extends Component<Props>{
   }
 
   _delTracker = async (id) => {
-    const ip = await getData("ip");
-    const authKey = await getData("authKey");
-    const charString = await getData("charString");
+    const { ip, authKey, charString } = await getMultiple(["ip", "authKey", "charString"]);
 
     fetch(`${ip}/character/trackers/${charString}/${id}`, {
       method: "DELETE",

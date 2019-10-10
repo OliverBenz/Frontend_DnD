@@ -12,10 +12,10 @@ import {
 
 // Counter Component
 // Min and Max Values are not required
-export default class Counter extends Component{
+export class Counter extends Component{
 
   _callbackAdd = () => {
-    if(this.props.max !== undefined){
+    if(!(this.props.max === 0 && this.props.min === 0)){
       if(this.props.value < this.props.max) this.props.callback(this.props.value + 1);
     }
     else{
@@ -24,7 +24,7 @@ export default class Counter extends Component{
 
   }
   _callbackSub = () => {
-    if(this.props.min !== undefined){
+    if(!(this.props.max === 0 && this.props.min === 0)){
       if(this.props.value > this.props.min) this.props.callback(this.props.value - 1);
     }
     else{
@@ -36,21 +36,49 @@ export default class Counter extends Component{
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={{fontSize: 18, paddingLeft: 15, paddingRight: 15}}>
-          {this.props.value}
-        </Text>
+      <View style={{alignSelf: 'baseline'}}>
+        <TextInput style={styles.text} onChange={(e) => this.props.onTitleChange(e.nativeEvent.text)} value={this.props.title} />
+        <View style={styles.container}>
+          <Text style={{fontSize: 18, paddingLeft: 15, paddingRight: 15}}>
+            { this.props.value }
+          </Text>
 
-        <View style={{flexDirection: 'column'}}>
-          <TouchableOpacity onPress={() => this._callbackAdd() } style={styles.button}>
-            <Text style={styles.text}>+</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity onPress={ () => this._callbackSub() } style={styles.button}>
-            <Text style={styles.text}>-</Text>
-          </TouchableOpacity>
+          <View style={{flexDirection: 'column'}}>
+            <TouchableOpacity onPress={() => this._callbackAdd() } style={styles.button}>
+              <Text style={styles.text}>+</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity onPress={ () => this._callbackSub() } style={styles.button}>
+              <Text style={styles.text}>-</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
+    );
+  }
+}
+
+export class CounterWM extends Counter{
+  render(){
+    return(
+      <View style={{alignSelf: 'baseline'}}>
+        <TextInput style={styles.text} onChange={(e) => this.props.onTitleChange(e.nativeEvent.text)} value={this.props.title} />
+        <View style={styles.container}>
+          <Text style={{fontSize: 18, paddingLeft: 15, paddingRight: 15}}>
+            { this.props.value } / { this.props.max }
+          </Text>
+
+          <View style={{flexDirection: 'column'}}>
+            <TouchableOpacity onPress={() => this._callbackAdd() } style={styles.button}>
+              <Text style={styles.text}>+</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity onPress={ () => this._callbackSub() } style={styles.button}>
+              <Text style={styles.text}>-</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>      
     );
   }
 }
