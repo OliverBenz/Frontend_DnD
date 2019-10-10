@@ -10,7 +10,7 @@ import {
   Text,
   Button
 } from 'react-native';
-import { storeData, getData } from '../../services/asyStorage';
+import { getMultiple } from '../../services/asyStorage';
 import CustomInput from '../../components/textInput';
 import AddNew from '../../components/addnew';
 
@@ -131,8 +131,7 @@ export default class Account extends Component<Props>{
   // Data fetching
 
   _delCharAPI = async (charString, password) => {
-    const ip = await getData("ip");
-    const authKey = await getData("authKey");
+    const { ip, authKey } = await getMultiple(["ip", "authKey"]);
 
     fetch(`${ip}/user/character`, {
       method: 'DELETE',

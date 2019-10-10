@@ -27,8 +27,20 @@ const remData = async (key) => {
   }
 }
 
+const getMultiple = async(keys) => {
+    let data = {};
+
+    for(let i = 0; i < keys.length; i++){
+      let val = await AsyncStorage.getItem(keys[i]);
+      data[keys[i]] = val;
+    }
+
+    return data;
+}
+
 export {
   storeData,
   getData,
-  remData
+  remData,
+  getMultiple
 }

@@ -63,7 +63,9 @@ export default class Login extends Component<Props>{
   }
 
   _registerAPI = async () => {
-    if(this.state.firstname !== "" && this.state.lastname !== "" && this.state.password !== "" && this.state.email !== "" && this.state.password == this.state.passwordCheck){
+    const { firstname, lastname, email, password, passwordCheck } = this.state;
+
+    if(firstname !== "" && lastname !== "" && password !== "" && email !== "" && password == passwordCheck){
       const ip = await getData("ip");
       
       fetch(`${ip}/user/register`, {
@@ -72,10 +74,10 @@ export default class Login extends Component<Props>{
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          "firstname": this.state.firstname,
-          "lastname": this.state.lastname,
-          "email": this.state.email,
-          "password": this.state.password
+          "firstname": firstname,
+          "lastname": lastname,
+          "email": email,
+          "password": password
         }),
       })
       .then((res) => res.json())

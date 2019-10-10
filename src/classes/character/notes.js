@@ -11,7 +11,7 @@ import {
   Image
 } from 'react-native';
 import { Card, ListItem, Button } from 'react-native-elements';
-import { getData } from '../../services/asyStorage';
+import { getData, getMultiple } from '../../services/asyStorage';
 import AddNew from '../../components/addnew';
 import Search from '../../components/search';
 
@@ -113,9 +113,7 @@ export default class Notes extends Component<Props>{
 
   // Data fetching
   _fetchNotes = async () => {
-    const ip = await getData("ip");
-    const authKey = await getData("authKey");
-    const charString = await getData("charString");
+    const { ip, authKey, charString } = await getMultiple(["ip", "authKey", "charString"]);
 
     fetch(`${ip}/character/notes/${charString}`, {
       method: "GET",
@@ -139,10 +137,7 @@ export default class Notes extends Component<Props>{
 
   _updateNote = async (id) => {
     const note = this.state.notes[this.state.notes.findIndex(x => x.id === id)];
-
-    const ip = await getData("ip");
-    const authKey = await getData("authKey");
-    const charString = await getData("charString");
+    const { ip, authKey, charString } = await getMultiple(["ip", "authKey", "charString"]);
 
     fetch(`${ip}/character/notes/${charString}`, {
       method: "PATCH",
@@ -163,10 +158,8 @@ export default class Notes extends Component<Props>{
   _postNote = async () => {
     let today = new Date();
     today = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, '0') + "-" + String(today.getDate()).padStart(2, '0') + " " + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    
-    const ip = await getData("ip");
-    const authKey = await getData("authKey");
-    const charString = await getData("charString");
+  
+    const { ip, authKey, charString } = await getMultiple(["ip", "authKey", "charString"]);
 
     fetch(`${ip}/character/notes/${charString}`, {
       method: "POST",
@@ -190,9 +183,7 @@ export default class Notes extends Component<Props>{
   }
 
   _delNote = async (id) => {
-    const ip = await getData("ip");
-    const authKey = await getData("authKey");
-    const charString = await getData("charString");
+    const { ip, authKey, charString } = await getMultiple(["ip", "authKey", "charString"]);
 
     fetch(`${ip}/character/notes/${charString}/${id}`, {
       method: "DELETE",

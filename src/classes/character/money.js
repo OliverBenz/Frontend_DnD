@@ -9,11 +9,9 @@ import {
   ActivityIndicator
 } from 'react-native';
 
-import { getData } from '../../services/asyStorage';
+import { getData, getMultiple } from '../../services/asyStorage';
 
-type Props = {};
-
-export default class Money extends Component<Props>{
+export default class Money extends Component{
   constructor(props){
     super(props);
 
@@ -35,11 +33,7 @@ export default class Money extends Component<Props>{
   }
 
   componentWillUnmount(){
-    getData("sessionId").then((sessionId) => {
-      getData("charString").then((charString) => {
-        this._postMoney();
-      });
-    });
+    this._postMoney();
   }
 
   render(){
@@ -73,9 +67,7 @@ export default class Money extends Component<Props>{
   // Data fetching
 
   _getMoney = async () => {
-    const ip = await getData("ip");
-    const authKey = await getData("authKey");
-    const charString = await getData("charString");
+    const { ip, authKey, charString } = await getMultiple(["ip", "authKey", "charString"]);
     
     fetch(`${ip}/character/money/${charString}`, {
       method: 'GET',
@@ -97,9 +89,7 @@ export default class Money extends Component<Props>{
   _postMoney = async () => {
     this._checkData();
 
-    const ip = await getData("ip");
-    const authKey = await getData("authKey");
-    const charString = await getData("charString");
+    const { ip, authKey, charString } = await getMultiple(["ip", "authKey", "charString"]);
     const { copper, silver, electrum, gold, platinum } = this.state;
     
     fetch(`${ip}/character/money/${charString}`, {

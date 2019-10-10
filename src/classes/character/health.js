@@ -8,7 +8,7 @@ import {
   TextInput,
   ActivityIndicator
 } from 'react-native';
-import { getData } from '../../services/asyStorage';
+import { getMultiple } from '../../services/asyStorage';
 
 type Props = {};
 
@@ -61,9 +61,7 @@ export default class Health extends Component<Props>{
   // Data fetching
 
   _getHealth = async () => {
-    const ip = await getData("ip");
-    const authKey = await getData("authKey");
-    const charString = await getData("charString");
+    const { ip, authKey, charString } = await getMultiple(["ip", "authKey", "charString"]);
 
     fetch(`${ip}/character/health/${charString}`, {
       mehod: 'GET',
@@ -77,16 +75,14 @@ export default class Health extends Component<Props>{
       this.setState({maxHealth: resJ.data.maxHealth, currentHealth: resJ.data.currentHealth, tempHealth: resJ.data.tempHealth, isLoading: false});
     })
     .catch((error) => {
-      alert(error)
+      /* alert(error) */
     });
   }
 
   _postHealth = async () => {
       this._checkData();
 
-      const ip = await getData("ip");
-      const authKey = await getData("authKey");
-      const charString = await getData("charString");
+      const { ip, authKey, charString } = await getMultiple(["ip", "authKey", "charString"]);
       const { maxHealth, currentHealth, tempHealth } = this.state;
       
       fetch(`${ip}/character/health/${charString}`, {
