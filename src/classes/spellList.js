@@ -40,7 +40,7 @@ export default class SpellList extends Component{
 
   componentDidMount(){
     this.setState({isLoading: true});
-    this._getSpellList(1);
+    this._getSpellList(1, "");
   }
 
   _inspectSpell = (id) => {
@@ -60,7 +60,7 @@ export default class SpellList extends Component{
 
     return(
       <ScrollView style={{flex: 1}}>
-        <Search value={this.state.search} placeholder="Search..." onChange={(e) => this.setState({search: e})} onClear={() => this._clearFilter()} onConfirm={() => this._getSpellList(this.props.navigation.state.params.url + "/" + parseInt(this.state.page * this.state.spellsPerPage) + "/" + parseInt(this.state.spellsPerPage) + "/" + this.state.search)} />
+        <Search value={this.state.search} placeholder="Search..." onChange={(e) => this.setState({search: e})} onClear={() => this._clearFilter()} onConfirm={() => this._getSpellList(1, this.state.search)} />
 
         { this.state.spellList.map(s => ( this._renderElement(s) )) }
 
@@ -84,12 +84,14 @@ export default class SpellList extends Component{
 
   _clearFilter = () => {
     this.setState({ search: "" });
-    this._getSpellList(this.props.navigation.state.params.url + "/" + parseInt(this.state.page * this.state.spellsPerPage) + "/" + parseInt(this.state.spellsPerPage));
+    this._getSpellList(1, "");
   }
 
   // Data fetching
-  _getSpellList = async (page) => {
+  _getSpellList = async (page, search) => {
     let url = `${this.props.navigation.state.params.url}/${(page-1) * this.state.spellsPerPage}/${this.state.spellsPerPage}`;
+    if(search !== "") url += `/${search}`;
+
     const authKey = await getData("authKey");
     const header = authKey === undefined ? {'Content-Type': 'application/json'} : {'Content-Type': 'application/json', 'Authorization': `Basic ${authKey}`};
     

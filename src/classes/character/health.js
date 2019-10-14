@@ -10,9 +10,7 @@ import {
 } from 'react-native';
 import { getMultiple } from '../../services/asyStorage';
 
-type Props = {};
-
-export default class Health extends Component<Props>{
+export default class Health extends Component{
   constructor(props){
     super(props);
 

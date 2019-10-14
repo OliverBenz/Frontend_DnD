@@ -10,7 +10,7 @@ import {
 const BLUE = "#428AF8";
 const LIGHT_GRAY = "#D3D3D3";
 
-class CustomInput extends Component{
+export default class CustomInput extends Component{
   state = {
     isFocused: false
   };
@@ -54,5 +54,3 @@ const styles = StyleSheet.create({
     fontSize: 18
   }
 });
-
-export default CustomInput;
