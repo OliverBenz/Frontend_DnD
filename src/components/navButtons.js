@@ -26,9 +26,12 @@ export default class NavButtons extends Component{
     }
 
     _onNextPress = () => {
-        let page = this.state.page + 1;
-        this.props.onPageChange(page);
-        this.setState({ page });
+        if(this.state.page < this.props.pages){
+            let page = this.state.page + 1;
+            this.props.onPageChange(page);
+            this.setState({ page });
+        }
+        if(this.state.page > this.props.pages) this.setState({ page: this.props.pages });
     }
 
     _onBackPress = () => {
@@ -40,7 +43,7 @@ export default class NavButtons extends Component{
     }
 
     _renderButtons = () => {
-        if(this.state.page === 1 && this.props.lastPage === false){
+        if(this.state.page === 1 && this.props.pages !== 1){
             return(
                 <View style={{flexDirection: 'row'}}>
                     <View style={{flex: 2}}></View>
@@ -51,10 +54,10 @@ export default class NavButtons extends Component{
                 </View>                
             );
         }
-        if(this.state.page === 1 && this.props.lastPage === true){
+        if(this.state.page === 1 && this.props.pages === 1){
             return(<View></View>);
         }
-        if(this.state.page > 1 && this.props.lastPage === false){
+        if(this.state.page > 1 && this.state.page < this.props.pages){
             return(
                 <View style={{flexDirection: 'row'}}>
                     <TouchableOpacity style={styles.button} onPress={()=> this._onBackPress()}>
@@ -69,7 +72,7 @@ export default class NavButtons extends Component{
                 </View>
             );
         }
-        if(this.props.lastPage === true){
+        if(this.state.page >= this.props.pages){
             return(
                 <View style={{flexDirection: 'row'}}>
                     <TouchableOpacity style={styles.button} onPress={()=> this._onBackPress()}>

@@ -6,11 +6,7 @@ import {
   View
 } from 'react-native';
 
-import { getData } from '../../services/asyStorage';
-
-type Props = {};
-
-export default class General extends Component<Props>{
+export default class General extends Component{
   constructor(props){
     super(props);
 

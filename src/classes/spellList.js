@@ -32,7 +32,7 @@ export default class SpellList extends Component{
       search: "",
 
       spellsPerPage: 20,
-      lastPage: false,
+      pages: 1,
 
       isLoading: false
     }
@@ -40,7 +40,8 @@ export default class SpellList extends Component{
 
   componentDidMount(){
     this.setState({isLoading: true});
-    this._getSpellList(1, "");
+    this._getSpellList(1, undefined);
+    this._getPages(this.state.spellsPerPage);
   }
 
   _inspectSpell = (id) => {
@@ -64,7 +65,7 @@ export default class SpellList extends Component{
 
         { this.state.spellList.map(s => ( this._renderElement(s) )) }
 
-        <NavButtons lastPage={this.state.lastPage} onPageChange={(p) => {this._getSpellList(p)}} />
+        <NavButtons pages={this.state.pages} onPageChange={(p) => {this._getSpellList(p, undefined)}} />
       </ScrollView>
     );
   }
@@ -84,17 +85,17 @@ export default class SpellList extends Component{
 
   _clearFilter = () => {
     this.setState({ search: "" });
-    this._getSpellList(1, "");
+    this._getSpellList(1, undefined);
   }
 
   // Data fetching
   _getSpellList = async (page, search) => {
     let url = `${this.props.navigation.state.params.url}/${(page-1) * this.state.spellsPerPage}/${this.state.spellsPerPage}`;
-    if(search !== "") url += `/${search}`;
+    if(search !== undefined) url += `/${search}`;
 
     const authKey = await getData("authKey");
     const header = authKey === undefined ? {'Content-Type': 'application/json'} : {'Content-Type': 'application/json', 'Authorization': `Basic ${authKey}`};
-    
+
     fetch(url, {
       method: 'GET',
       headers: header
@@ -102,9 +103,26 @@ export default class SpellList extends Component{
     .then((res) => res.json())
     .then((resJ) => {
       if(resJ.success){
-        if(resJ.data.length < this.state.spellsPerPage) this.setState({ spellList: resJ.data, lastPage: true });
-        else this.setState({ spellList: resJ.data });
+        this.setState({ spellList: resJ.data });
         if(this.state.isLoading === true) this.setState({ isLoading: false });
+      }
+    });
+  }
+
+  _getPages = async (spellsPerPage) => {
+    let url = this.props.navigation.state.params.url.replace("spells", "spellCount");
+    const authKey = await getData("authKey");
+    const header = authKey === undefined ? {'Content-Type': 'application/json'} : {'Content-Type': 'application/json', 'Authorization': `Basic ${authKey}`};
+
+    fetch(url, {
+      method: 'GET',
+      headers: header
+    })
+    .then((res) => res.json())
+    .then((resJ) => {
+      if(resJ.success){
+        let pages = resJ.data / spellsPerPage;
+        this.setState({ pages });
       }
     });
   }

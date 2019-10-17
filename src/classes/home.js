@@ -9,12 +9,9 @@ import {
   TouchableOpacity,
   Picker
 } from 'react-native';
-import { Button } from 'react-native-elements';
 import { storeData, getData, remData } from '../services/asyStorage';
 
-type Props = {};
-
-export default class Home extends Component<Props>{
+export default class Home extends Component{
   static navigationOptions = {
     title: 'Home'
   };
@@ -31,7 +28,7 @@ export default class Home extends Component<Props>{
   }
 
   componentDidMount(){
-    storeData("ip", "http://206.81.26.204:3004/dnd").then(() => {
+    storeData("ip", "http://157.230.101.45:3004/dnd").then(() => {
       this._checkLogged();
     });
     

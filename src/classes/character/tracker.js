@@ -78,7 +78,7 @@ export default class Tracker extends Component<Props>{
             <Text>Add</Text>
           </TouchableOpacity>
         </View>
-      )
+      );
     }
   }
 
@@ -89,7 +89,7 @@ export default class Tracker extends Component<Props>{
         <View key={t.id}>
           <CounterWM title={t.title} value={t.value} min={t.minValue} max={t.maxValue} onTitleChange={(e) => this._changeTracker(t.id, e, "title")} onChange={(e) => alert(e)} callback={(e) => this._changeTracker(t.id, e, "value")} />
         </View>
-      );      
+      );
     }
     else{
       return(
