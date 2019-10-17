@@ -121,7 +121,7 @@ export default class SpellList extends Component{
     .then((res) => res.json())
     .then((resJ) => {
       if(resJ.success){
-        let pages = resJ.data / spellsPerPage;
+        let pages = Math.ceil(resJ.data / spellsPerPage);
         this.setState({ pages });
       }
     });
