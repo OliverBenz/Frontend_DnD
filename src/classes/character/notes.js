@@ -7,17 +7,15 @@ import {
   ScrollView,
   Text,
   TextInput,
-  TouchableOpacity,
-  Image
+  TouchableOpacity
 } from 'react-native';
-import { Card, ListItem, Button } from 'react-native-elements';
-import { getData, getMultiple } from '../../services/asyStorage';
+import { Card } from 'react-native-elements';
+import { getMultiple } from '../../services/asyStorage';
 import AddNew from '../../components/addnew';
 import Search from '../../components/search';
 
-type Props = {};
 
-export default class Notes extends Component<Props>{
+export default class Notes extends Component{
   constructor(props){
     super(props);
 

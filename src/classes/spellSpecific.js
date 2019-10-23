@@ -26,15 +26,7 @@ export default class SpellSpecific extends Component<Props>{
   constructor(props){
     super(props);
     this.state = {
-      spell: {
-        "id": undefined,
-        "name": undefined,
-        "level": undefined,
-        "range": undefined,
-        "castTime": undefined,
-        "save": undefined,
-        "duration": undefined
-      },
+      spell: { },
       userHas: false
     }
   }
@@ -48,54 +40,55 @@ export default class SpellSpecific extends Component<Props>{
   }
 
   render(){
+    const { schoolName, castTime, range, material, duration, page, ritual, concentration, desc, higher_level } = this.state.spell;
     return(
       <ScrollView style={styles.container}>
         {/* Listing */}
         <View style={styles.textContainer}>
           <Text style={styles.header}>School: </Text>
-          <Text style={styles.text}>{ this.state.spell.schoolName }</Text>
+          <Text style={styles.text}>{ schoolName }</Text>
         </View>
 
         <View style={styles.textContainer}>
           <Text style={styles.header}>Casting Time: </Text>
-          <Text style={styles.text}>{ this.state.spell.castTime }</Text>
+          <Text style={styles.text}>{ castTime }</Text>
         </View>
 
         <View style={styles.textContainer}>
           <Text style={styles.header}>Range: </Text>
-          <Text style={styles.text}>{ this.state.spell.rage }</Text>
+          <Text style={styles.text}>{ range }</Text>
         </View>
 
         <View style={styles.textContainer}>
           <Text style={styles.header}>Components: </Text>
-          <Text style={styles.text}>{ this.state.spell.material }</Text>
+          <Text style={styles.text}>{ material }</Text>
         </View>
 
         <View style={styles.textContainer}>
           <Text style={styles.header}>Duration: </Text>
-          <Text style={styles.text}>{ this.state.spell.duration }</Text>
+          <Text style={styles.text}>{ duration }</Text>
         </View>
 
         <View style={styles.textContainer}>
           <Text style={styles.header}>Page: </Text>
-          <Text style={styles.text}>{ this.state.spell.page }</Text>
+          <Text style={styles.text}>{ page }</Text>
         </View>
 
         <View style={styles.textContainer}>
           <Text style={styles.header}>Ritual: </Text>
-          <Text style={styles.text}>{ this.state.spell.ritual }</Text>
+          <Text style={styles.text}>{ ritual }</Text>
         </View>
 
         <View style={styles.textContainer}>
           <Text style={styles.header}>Concentration: </Text>
-          <Text style={styles.text}>{ this.state.spell.concentration }</Text>
+          <Text style={styles.text}>{ concentration }</Text>
         </View>
 
         <Text style={[styles.header, {marginTop: 20}]}>Description</Text>
-        <Text style={styles.text}>{ this.state.spell.desc }</Text>
+        <Text style={styles.text}>{ desc }</Text>
 
         <Text style={[styles.header, {marginTop: 20}]}>At Higher Levels:</Text>
-        <Text style={styles.text}>{ this.state.spell.higher_level }</Text>
+        <Text style={styles.text}>{ higher_level }</Text>
 
         { this._renderButton() }
       </ScrollView>
@@ -103,9 +96,11 @@ export default class SpellSpecific extends Component<Props>{
   }
 
   _renderButton = () => {
+    const { id } = this.state.spell;
+
     if(!this.state.userHas){
       return(
-        <TouchableOpacity style={styles.button} onPress={() => this._updateCharSpells(this.state.spell.id, "POST")}>
+        <TouchableOpacity style={styles.button} onPress={() => this._updateCharSpells(id, "POST")}>
           <Image source={require('../resources/icons/add.png')} style={{marginRight: 10}} />
           <Text>Add to Character</Text>
         </TouchableOpacity>
@@ -113,7 +108,7 @@ export default class SpellSpecific extends Component<Props>{
     }
     else{
       return(
-        <TouchableOpacity style={styles.button} onPress={() => this._updateCharSpells(this.state.spell.id, "DELETE")}>
+        <TouchableOpacity style={styles.button} onPress={() => this._updateCharSpells(id, "DELETE")}>
           <Image source={require('../resources/icons/clear.png')} style={{marginRight: 10}} />
           <Text>Remove from Character</Text>
         </TouchableOpacity>

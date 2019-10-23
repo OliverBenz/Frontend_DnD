@@ -4,7 +4,6 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  TextInput,
   View,
   ScrollView,
   TouchableOpacity,
@@ -41,7 +40,6 @@ export default class SpellList extends Component{
   componentDidMount(){
     this.setState({isLoading: true});
     this._getSpellList(1, undefined);
-    this._getPages(this.state.spellsPerPage);
   }
 
   _inspectSpell = (id) => {
@@ -105,12 +103,17 @@ export default class SpellList extends Component{
       if(resJ.success){
         this.setState({ spellList: resJ.data });
         if(this.state.isLoading === true) this.setState({ isLoading: false });
+        this._getPages(this.state.spellsPerPage);
       }
     });
   }
 
   _getPages = async (spellsPerPage) => {
+
+    const { search } = this.state;
     let url = this.props.navigation.state.params.url.replace("spells", "spellCount");
+    url += search === undefined ? "" : `/${search}`;
+
     const authKey = await getData("authKey");
     const header = authKey === undefined ? {'Content-Type': 'application/json'} : {'Content-Type': 'application/json', 'Authorization': `Basic ${authKey}`};
 
